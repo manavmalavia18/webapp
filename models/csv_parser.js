@@ -1,14 +1,22 @@
+require('dotenv').config()
 const fs = require('fs');
 const csv = require('csv-parser');
 const bcrypt = require('bcrypt');
 const dbconnect= require('../connection.js');
 const User = require('../models/user.js').User
 
+const path = process.env.DEFAULTUSERPATH
 async function loadUsersFromCSV() {
+  await dbconnect.dbconnect();
   try {
-    await dbconnect.dbconnect();
+    if(path ===''){
+      console.log('default users file not found')
+    }
+    else{
+      console.log("reading default users from file :",path)
+    }
     // Read the CSV file
-    fs.createReadStream('/opt/user.csv')
+    fs.createReadStream(path)
       .pipe(csv())
       .on('data', async (row) => {
         // Check if the user already exists based on email

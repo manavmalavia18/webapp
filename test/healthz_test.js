@@ -54,13 +54,13 @@ describe("CI Testing for GET/healthz", () => {
 
       expect(dbstatus, "Database connection failed").to.be.true;
     } 
-    // finally {
-    //   setTimeout(() => {
-    //     process.exit(0);
-    //   }, 2000); //
-    // }
+    finally {
+      setTimeout(() => {
+        process.exit(0);
+      }, 2000); //
+    }
   });
-  setTimeout(() => {
-    process.exit(0);
-  }, 5000); //
+  // setTimeout(() => {
+  //   process.exit(0);
+  // }, 5000); //
 });

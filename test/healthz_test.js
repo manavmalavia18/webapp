@@ -75,23 +75,20 @@ const { expect } = chai;
 chai.use(chaiHttp);
 
 describe("CI Testing for GET/healthz", () => {
+  // Set a longer timeout for this specific test
+  this.timeout(10000); // Adjust the timeout as needed
+
   it("Successfully check the Db connection", async () => {
     let dbstatus = true;
 
-    // Wrap the test logic in a Promise
-    return new Promise(async (resolve, reject) => {
-      server();
-
-      try {
-        const response = await chai.request(app).get("/healthz");
-        expect(response).to.have.status(200);
-        resolve(); // Resolve the Promise when the test is complete
-      } catch (error) {
-        console.error("Test Error:", error);
-        dbstatus = false;
-        expect(dbstatus, "Database connection failed").to.be.true;
-        reject(error); // Reject the Promise if the test fails
-      }
-    });
+    try {
+      await server(); // Wait for the dbconnect to complete
+      const response = await chai.request(app).get("/healthz");
+      expect(response).to.have.status(200);
+    } catch (error) {
+      console.error("Test Error:", error);
+      dbstatus = false;
+      expect(dbstatus, "Database connection failed").to.be.true;
+    }
   });
 });

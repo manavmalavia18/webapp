@@ -34,7 +34,7 @@ const server = require("../connection.js").dbconnect;
 const { describe } = require("mocha");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
-const app = require("../index.js"); // Adjust the path to your app's entry point
+const app = require("../index.js").app; // Adjust the path to your app's entry point
 const { dbconnect } = require("../connection.js");
 
 const { expect } = chai;

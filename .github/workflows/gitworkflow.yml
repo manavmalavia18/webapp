@@ -15,8 +15,8 @@ jobs:
           echo DB_PASSWORD=root1234 >> .env
           echo DB_NAME=csye6225_db >> .env
           echo DB_USER=root >> .env
-          echo DB_PORT=3306 >> .env
-          echo DB_HOST=localhost >> .env
+          echo DB_PORT=3307 >> .env
+          echo DB_HOST=127.0.0.1 >> .env
           echo DIALECT=mariadb >> .env
           echo DEFAULTUSERPATH='' >> .env
 
@@ -27,13 +27,15 @@ jobs:
           sudo systemctl start mariadb
           sudo mysql -e "GRANT ALL ON *.* TO 'root'@'localhost' IDENTIFIED BY 'root1234';"
 
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v2
+      - name: Use Node.js 18v
+        uses: actions/setup-node@v3
         with:
           node-version: 18.x
+          cache: 'npm'
 
       - name: Install Node.js Dependencies
         run: npm install
 
       - name: Run Integration Tests
         run: npm test
+

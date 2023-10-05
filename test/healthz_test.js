@@ -30,7 +30,7 @@
 //   });
 // });
 
-const server = require("../connection.js").conn;
+const server = require("../connection.js").dbconnect;
 const { describe } = require("mocha");
 const chai = require("chai");
 const chaiHttp = require("chai-http");

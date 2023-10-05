@@ -11,6 +11,7 @@ async function loadUsersFromCSV() {
   try {
     if(path ===''){
       console.log('default users file not found')
+      return
     }
     else{
       console.log("reading default users from file :",path)

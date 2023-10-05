@@ -66,3 +66,4 @@ app.all('/*', (request, response) => {
 });
 // server start
 app.listen(3000)
+module.exports={app}

@@ -75,10 +75,10 @@ const { expect } = chai;
 chai.use(chaiHttp);
 
 describe("CI Testing for GET/healthz", () => {
-  // Set a longer timeout for this specific test
-  this.timeout(10000); // Adjust the timeout as needed
+  it("Successfully check the Db connection", async function() {
+    // Set a longer timeout for this specific test
+    this.timeout(10000); // Adjust the timeout as needed
 
-  it("Successfully check the Db connection", async () => {
     let dbstatus = true;
 
     try {

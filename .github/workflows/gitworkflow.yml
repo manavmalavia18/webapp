@@ -17,6 +17,7 @@ jobs:
           echo DB_USER=root >> .env
           echo DB_PORT=3306 >> .env
           echo DB_HOST=localhost >> .env
+          echo DIALECT=mariadb >> .env
 
       - name: Set up MariaDB
         run: |

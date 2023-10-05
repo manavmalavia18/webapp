@@ -1,0 +1,31 @@
+ame: Healthz CI
+on: [pull_request]
+
+jobs:
+  Run-Integration-test-for-healthz:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set .env file
+        run: |
+          touch .env
+          echo DATABASE_PASSWORD = root1234 >> .env
+          echo DATABASE_NAME = csye6225_assignments >> .env
+          echo DATABASE_USER = root >> .env
+          echo PORT = 3306 >> .env
+          echo HOSTNAME = localhost >> .env
+
+      - name: Set up MariaDB
+        run: |
+          sudo apt-get update
+          sudo apt-get install mariadb-server -y
+          sudo systemctl start mariadb
+          sudo mysql -e "GRANT ALL ON *.* TO 'root'@'localhost' IDENTIFIED BY 'root1234';"
+
+      - name: Use Node.js 18v
+        uses: actions/setup-node@v3
+        with:
+            node-version: 18.x
+            cache: 'npm'

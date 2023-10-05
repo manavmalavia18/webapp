@@ -25,7 +25,7 @@ describe("CI Testing for GET/healthz", () => {
     } finally {
       setTimeout(() => {
         process.exit(0); 
-      }, 2000); // 
+      }, 3000); // 
     }
   });
 });

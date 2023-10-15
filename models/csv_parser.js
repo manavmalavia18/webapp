@@ -21,6 +21,7 @@ async function loadUsersFromCSV() {
       .pipe(csv())
       .on('data', async (row) => {
         // Check if the user already exists based on email
+
         const existingUser = await User.findOne({ where: { email: row.email } });
 
         if (!existingUser) {

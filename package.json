@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
+    "dev":"nodemon index.js",
     "test": "mocha test"
   },
+  
   "author": "manav",
   "license": "MIT",
   "dependencies": {
@@ -22,9 +23,7 @@
     "mariadb": "3.2.1",
     "mocha": "^10.2.0",
     "mysql2": "^3.6.1",
+    "nodemon": "^3.0.1",
     "sequelize": "^6.33.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
   }
 }

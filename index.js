@@ -1,5 +1,5 @@
 require('dotenv').config();
-const db = require("./connection");
+const db = require("./connection.js");
 const csv = require('./models/csv_parser.js');
 const basicAuthMiddleware = require("./middleware/authentication")
 const assignment_controllers=require("./controllers/assignment_controllers");

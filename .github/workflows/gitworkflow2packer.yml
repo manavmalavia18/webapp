@@ -11,14 +11,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setting up Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: '18.x'
           
-      - name: Building application artifact for webapp
+      - name: Building webapp application artifact 
         if: success()
         run: zip -r webapp.zip .
         
@@ -29,8 +29,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
           aws-region: us-west-2
           
-      - name: Initializing packer configuration
+      - name: Initialize packer configuration
         run: packer init webapp.pkr.hcl
         
-      - name: Building AMI with Packer
+      - name: Build AMI with Packer
         run: packer build webapp.pkr.hcl

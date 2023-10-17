@@ -27,13 +27,17 @@ variable "subnet_id" {
 }
 
 source "amazon-ebs" "my-ami" {
-  profile         = "dev"
+  # profile         = "dev"
   ami_name        = "csye6225_debian"
   ami_description = "ami from csye6225"
   region          = "${var.aws_region}"
 
   ami_regions = [
     "us-west-2",
+  ]
+
+  ami_users = [
+    "518683749434",
   ]
 
   aws_polling {
@@ -79,21 +83,4 @@ build {
   }
 
 }
-
-
-#   provisioner "shell" {
-#     script = "scripts/install_application.sh" # Replace with your application installation script
-#   }
-
-#   post-processor "manifest" {
-#     output = "debian-12-ami.json"
-#   }
-
-#   post-processor "ami" {
-#     name = "debian-12-ami-final"
-#     users = ["123456789012"] # Replace with your DEMO AWS account ID
-#     launch_permissions {
-#       user_ids = ["123456789012"] # Replace with your DEMO AWS account ID
-#     }
-#   }
 

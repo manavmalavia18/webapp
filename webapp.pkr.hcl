@@ -28,7 +28,7 @@ variable "subnet_id" {
 
 source "amazon-ebs" "my-ami" {
   # profile         = "dev"
-  ami_name        = "csye6225_debian"
+  ami_name        = "csye6225_debianami-${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = "ami from csye6225"
   region          = "${var.aws_region}"
 

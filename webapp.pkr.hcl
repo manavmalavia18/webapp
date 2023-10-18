@@ -91,6 +91,7 @@ build {
       "echo web app zip process",
       "sudo ls -al",
       "unzip webapp.zip -d webapp_main",
+      "sudo mv /home/admin/webapp_main/user.csv /opt",
       "sudo ls -al",
       "cd webapp_main",
       "npm install",

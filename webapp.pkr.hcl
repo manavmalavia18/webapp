@@ -9,13 +9,13 @@ packer {
 
 
 variable "aws_region" {
-  type    = string
+  type = string
   # default = "us-west-2"
 }
 
 variable "source_ami" {
   type    = string
-  # default = "ami-0b6edd8449255b799"
+  default = "ami-0b6edd8449255b799"
 }
 variable "ssh_username" {
   type    = string
@@ -23,7 +23,7 @@ variable "ssh_username" {
 }
 
 variable "subnet_id" {
-  type    = string
+  type = string
   # default = "subnet-06ccf8aab10478919"
 }
 variable "database_host" {
@@ -43,9 +43,10 @@ source "amazon-ebs" "my-ami" {
   region          = "${var.aws_region}"
 
   instance_type = "t2.micro"
-  source_ami1    = "${var.source_ami}"
+  source_ami    = "${var.source_ami}"
   ssh_username  = "${var.ssh_username}"
   subnet_id     = "${var.subnet_id}"
+
   # ami_regions = [
   #   "us-west-2",
   # ]
@@ -59,7 +60,7 @@ source "amazon-ebs" "my-ami" {
     max_attempts  = 50
   }
 
- 
+
 
   launch_block_device_mappings {
     device_name           = "/dev/xvda"
@@ -91,12 +92,12 @@ build {
       "sudo apt install -y unzip",
     ]
   }
-   provisioner "file" {
-    source = "webapp.zip"
+  provisioner "file" {
+    source      = "webapp.zip"
     destination = "~/"
   }
 
-   provisioner "shell" {
+  provisioner "shell" {
     inline = [
       "echo web app zip process",
       "sudo ls -al",

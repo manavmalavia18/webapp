@@ -13,7 +13,7 @@ jobs:
       
       - name: Building webapp application artifact 
         if: success()
-        run: zip -r webapp.zip 
+        run: zip -r webapp.zip .
 
       - name: Initialize packer configuration
         run: packer init webapp.pkr.hcl

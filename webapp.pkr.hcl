@@ -81,6 +81,23 @@ build {
     ]
 
   }
+   provisioner "file" {
+    source = "webapp.zip"
+    destination = "~/"
+  }
+
+   provisioner "shell" {
+    inline = [
+      "echo web app zip process",
+      "sudo ls -al",
+      "unzip webapp.zip -d webapp_main",
+      "sudo ls -al",
+      "cd webapp_main",
+      "npm install",
+      "npm install nodemon",
+    ]
+  }
+
 
 }
 

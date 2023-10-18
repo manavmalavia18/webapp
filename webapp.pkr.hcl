@@ -6,11 +6,11 @@ packer {
     }
   }
 }
-variable "database_name" {
+variable "database_host" {
   type = string
 }
 
-variable "database_password" {
+variable "database_pass" {
   type = string
 }
 
@@ -18,18 +18,14 @@ variable "database_user" {
   type = string
 }
 
-variable "hostname" {
-  type = string
-}
-
 variable "aws_region" {
   type    = string
-  default = "us-west-2"
+  # default = "us-west-2"
 }
 
 variable "source_ami" {
   type    = string
-  default = "ami-0b6edd8449255b799"
+  # default = "ami-0b6edd8449255b799"
 }
 variable "ssh_username" {
   type    = string
@@ -38,7 +34,7 @@ variable "ssh_username" {
 
 variable "subnet_id" {
   type    = string
-  default = "subnet-06ccf8aab10478919"
+  # default = "subnet-06ccf8aab10478919"
 }
 
 source "amazon-ebs" "my-ami" {
@@ -90,12 +86,10 @@ build {
       "sudo apt-get update",
       "sudo apt-get install mariadb-server -y",
       "sudo systemctl start mariadb",
-      "sudo mysql -e \"GRANT ALL ON *.* TO '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASSWORD';\"",
+      "sudo mysql -e \"GRANT ALL ON *.* TO '${var.database_user}'@'localhost' IDENTIFIED BY '${var.database_pass}';\"",
       "sudo apt install nodejs npm -y",
       "sudo apt install -y unzip",
     ]
-    environment_vars = ["DB_NAME=${var.database_name}", "DB_USER=${var.database_user}", "DB_HOST=${var.hostname}",
-    "DB_PASSWORD=${var.database_password}"]
   }
    provisioner "file" {
     source = "webapp.zip"

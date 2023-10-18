@@ -6,6 +6,21 @@ packer {
     }
   }
 }
+variable "database_name" {
+  type = string
+}
+
+variable "database_password" {
+  type = string
+}
+
+variable "database_user" {
+  type = string
+}
+
+variable "hostname" {
+  type = string
+}
 
 variable "aws_region" {
   type    = string
@@ -32,9 +47,9 @@ source "amazon-ebs" "my-ami" {
   ami_description = "ami from csye6225"
   region          = "${var.aws_region}"
 
-  ami_regions = [
-    "us-west-2",
-  ]
+  # ami_regions = [
+  #   "us-west-2",
+  # ]
 
   ami_users = [
     "518683749434",
@@ -75,11 +90,12 @@ build {
       "sudo apt-get update",
       "sudo apt-get install mariadb-server -y",
       "sudo systemctl start mariadb",
-      "sudo mysql -e \"GRANT ALL ON *.* TO 'root'@'localhost' IDENTIFIED BY 'root1234';\"",
+      "sudo mysql -e \"GRANT ALL ON *.* TO '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASSWORD';\"",
       "sudo apt install nodejs npm -y",
       "sudo apt install -y unzip",
     ]
-
+    environment_vars = ["DB_NAME=${var.database_name}", "DB_USER=${var.database_user}", "DB_HOST=${var.hostname}",
+    "DB_PASSWORD=${var.database_password}"]
   }
    provisioner "file" {
     source = "webapp.zip"
@@ -101,4 +117,3 @@ build {
 
 
 }
-

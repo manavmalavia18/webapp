@@ -29,3 +29,11 @@ jobs:
 
       - name: Validate template
         run: packer validate webapp.pkr.hcl
+        env:
+          PKR_VAR_database_name: '${{secrets.DB_NAME}}'
+          PKR_VAR_database_password: ${{ secrets.DB_PASSWORD }} 
+          PKR_VAR_database_user: ${{ secrets.DB_USER }}
+          PKR_VAR_hostname: ${{ secrets.DB_HOST }} 
+          PKR_VAR_aws_region: "${{ secrets.AWS_REGION }}"
+          PKR_VAR_source_ami: "${{ secrets.SOURCE_AMI }}"
+          PKR_VAR_subnet_id: "${{ secrets.SUBNET_ID }}"

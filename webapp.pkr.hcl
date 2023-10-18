@@ -6,15 +6,34 @@ packer {
     }
   }
 }
+variable "DB_NAME" {
+  type = string
+}
+
+variable "DB_USER" {
+  type = string
+}
+
+variable "DB_HOST" {
+  type = string
+}
+
+variable "DB_PASSWORD" {
+  type = string
+}
+
+variable "DB_PORT" {
+  type = string
+}
 
 variable "aws_region" {
   type    = string
-  default = "us-west-2"
+  # default = "us-west-2"
 }
 
 variable "source_ami" {
   type    = string
-  default = "ami-0b6edd8449255b799"
+  # default = "ami-0b6edd8449255b799"
 }
 variable "ssh_username" {
   type    = string
@@ -23,7 +42,7 @@ variable "ssh_username" {
 
 variable "subnet_id" {
   type    = string
-  default = "subnet-06ccf8aab10478919"
+  # default = "subnet-06ccf8aab10478919"
 }
 
 source "amazon-ebs" "my-ami" {
@@ -32,9 +51,9 @@ source "amazon-ebs" "my-ami" {
   ami_description = "ami from csye6225"
   region          = "${var.aws_region}"
 
-  ami_regions = [
-    "us-west-2",
-  ]
+  # ami_regions = [
+  #   "us-west-2",
+  # ]
 
   ami_users = [
     "518683749434",
@@ -69,16 +88,22 @@ build {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
       "CHECKPOINT_DISABLE=1",
+      "DB_NAME=${var.DB_NAME}",
+      "DB_USER=${var.DB_USER}",
+      "DB_HOST=${var.DB_HOST}",
+      "DB_PASSWORD=${var.DB_PASSWORD}",
+      "DB_PORT=${var.DB_PORT}",
     ]
 
     inline = [
       "sudo apt-get update",
       "sudo apt-get install mariadb-server -y",
       "sudo systemctl start mariadb",
-      "sudo mysql -e \"GRANT ALL ON *.* TO 'root'@'localhost' IDENTIFIED BY 'root1234';\"",
+      "sudo mysql -e \"GRANT ALL ON *.* TO '${DB_USER}'@'${DB_HOST}' IDENTIFIED BY '${DB_PASSWORD}';\"",
       "sudo apt install nodejs npm -y",
       "sudo apt install -y unzip",
-    ]
+      ]
+
 
   }
    provisioner "file" {
@@ -97,6 +122,7 @@ build {
       "npm install",
       "npm install nodemon",
     ]
+    
   }
 
 

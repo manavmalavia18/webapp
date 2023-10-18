@@ -50,3 +50,15 @@ jobs:
 
       - name: Build AMI with Packer
         run: packer build webapp.pkr.hcl
+        env:
+          PKR_VAR_DB_NAME: '${{secrets.DB_NAME}}'
+          PKR_VAR_DB_PASSWORD: ${{secrets.DB_PASSWORD}} 
+          PKR_VAR_DB_USER: ${{secrets.DB_USER}}
+          PKR_VAR_DB_PORT: ${{secrets.DB_PORT}}
+          PKR_VAR_DB_HOST: ${{secrets.DB_HOST}} 
+          DIALECT: ${{secrets.DIALECT}} 
+          DEFAULTUSERPATH: '${{secrets.DEFAULTUSERPATH}}' 
+          PKR_VAR_aws-region: "${{ secrets.AWS_REGION }}"
+          PKR_VAR_source-ami: "${{ secrets.SOURCE_AMI }}"
+          # PKR_VAR_ssh-username: "${{ secrets.SSH_USERNAME }}"
+          PKR_VAR_subnet-id: "${{ secrets.SUBNET_ID }}"

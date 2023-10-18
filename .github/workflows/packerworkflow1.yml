@@ -11,17 +11,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       
-      - name: Create Environment File
-        run: |
-          touch .env
-          echo "DB_PASSWORD=${{secrets.DB_PASSWORD}}" >> .env
-          echo "DB_NAME=${{secrets.DB_NAME}}" >> .env
-          echo "DB_USER=${{secrets.DB_USER}}" >> .env
-          echo "DB_PORT=${{secrets.DB_PORT}}" >> .env
-          echo "DB_HOST=${{secrets.DB_HOST}}" >> .env
-          echo "DIALECT=${{secrets.DIALECT}}" >> .env
-          echo "DEFAULTUSERPATH=${{secrets.DEFAULTUSERPATH}}" >> .env
-
       - name: Building webapp application artifact 
         if: success()
         run: zip -r webapp.zip .
@@ -40,15 +29,3 @@ jobs:
 
       - name: Validate template
         run: packer validate webapp.pkr.hcl
-        env:
-          PKR_VAR_DB_NAME: '${{secrets.DB_NAME}}'
-          PKR_VAR_DB_PASSWORD: ${{secrets.DB_PASSWORD}} 
-          PKR_VAR_DB_USER: ${{secrets.DB_USER}}
-          PKR_VAR_DB_PORT: ${{secrets.DB_PORT}}
-          PKR_VAR_DB_HOST: ${{secrets.DB_HOST}} 
-          DIALECT: ${{secrets.DIALECT}} 
-          DEFAULTUSERPATH: '${{secrets.DEFAULTUSERPATH}}' 
-          PKR_VAR_aws_region: "${{ secrets.AWS_REGION }}"
-          PKR_VAR_source_ami: "${{ secrets.SOURCE_AMI }}"
-          # PKR_VAR_ssh-username: "${{ secrets.SSH_USERNAME }}"
-          PKR_VAR_subnet_id: "${{ secrets.SUBNET_ID }}"

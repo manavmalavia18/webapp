@@ -36,10 +36,7 @@ jobs:
 
       - name: Building webapp application artifact 
         if: success()
-        run: |
-          #Exclude .git files when zipping the webapp
-          git clean -xdf
-          zip -r webapp.zip .
+        run: zip -r webapp.zip .
 
       - name: Configuring AWS credentials
         uses: aws-actions/configure-aws-credentials@v1

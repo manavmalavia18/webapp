@@ -38,13 +38,12 @@ variable "database_user" {
   type = string
 }
 source "amazon-ebs" "my-ami" {
-  # profile         = "dev"
   ami_name        = "csye6225_debianami-${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = "ami from csye6225"
   region          = "${var.aws_region}"
 
   instance_type = "t2.micro"
-  source_ami    = "${var.source_ami}"
+  source_ami1    = "${var.source_ami}"
   ssh_username  = "${var.ssh_username}"
   subnet_id     = "${var.subnet_id}"
   # ami_regions = [

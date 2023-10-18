@@ -57,16 +57,4 @@ jobs:
           PKR_VAR_aws_region: "${{secrets.AWS_REGION}}"
           PKR_VAR_source_ami: "${{secrets.SOURCE_AMI}}"
           PKR_VAR_subnet_id: "${{secrets.SUBNET_ID}}"
-        # env:
-        #   PKR_VAR_database: '${{secrets.DB_NAME}}'
-        #   PKR_VAR_database_pass: ${{secrets.DB_PASSWORD}} 
-        #   PKR_VAR_database_user: ${{secrets.DB_USER}}
-        #   PKR_VAR_database_port: ${{secrets.DB_PORT}}
-        #   PKR_VAR_database_host: ${{secrets.DATABASE_HOST}} 
-        #   DIALECT: ${{secrets.DIALECT}} 
-        #   DEFAULTUSERSPATH: '${{secrets.DEFAULTUSERSPATH}}' 
-        #   AMI_USER_DEMO: "${{secrets.AMI_USER_DEMO}}" 
-        #   PKR_VAR_aws-region: "${{ secrets.AWS_REGION }}"
-        #   PKR_VAR_source-ami: "${{ secrets.SOURCE_AMI }}"
-        #   # PKR_VAR_ssh-username: "${{ secrets.SSH_USERNAME }}"
-        #   PKR_VAR_subnet-id: "${{ secrets.SUBNET_ID }}"
+        

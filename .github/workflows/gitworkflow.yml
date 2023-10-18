@@ -17,15 +17,15 @@ jobs:
           echo "DB_USER=${{secrets.DB_USER}}" >> .env
           echo "DB_PORT=${{secrets.DB_PORT}}" >> .env
           echo "DB_HOST=${{secrets.DB_HOST}}" >> .env
-          echo "DIALECT=${{secrets.DIALECT}}" >> .env
+          echo DIALECT=mariadb >> .env
           echo "DEFAULTUSERPATH=${{secrets.DEFAULTUSERPATH}}" >> .env
-
+        
       - name: Set up MariaDB
         run: |
           sudo apt-get update
           sudo apt-get install mariadb-server -y
           sudo systemctl start mariadb
-          sudo mysql -e "GRANT ALL ON *.* TO '{{secrets.DB_USER}}'@'localhost' IDENTIFIED BY '{{secrets.DB_PASSWORD}}';"
+          sudo mysql -e "GRANT ALL ON *.* TO '${{secrets.DB_USER}}'@'localhost' IDENTIFIED BY 'DB_PASSWORD';"
 
       - name: Use Node.js 18v
         uses: actions/setup-node@v3

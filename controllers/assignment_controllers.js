@@ -15,6 +15,16 @@ const createAssignment = async (req, res) => {
     if(contentLength==0){
       res.status(400).send()
     }
+    if (typeof name !== 'string' ||
+    typeof points !== 'number' ||
+    typeof num_of_attempts !== 'number' ||
+    typeof deadline !== 'string' ||
+    !name || !points || !num_of_attempts || !deadline) {
+      return res.status(400).send();
+    }
+    if (!Number.isInteger(points) || !Number.isInteger(num_of_attempts)) {
+      return res.status(400).send();
+    }
     const assignment = await Assignment.create({
       name,
       points,
@@ -22,21 +32,35 @@ const createAssignment = async (req, res) => {
       deadline,
       userId,
     });
-    res.status(201).send(assignment);
+    const resAssignment = {
+      id: assignment.id,
+      name: assignment.name,
+      points: assignment.points,
+      num_of_attempts: assignment.num_of_attempts,
+      deadline: assignment.deadline,
+      assignment_created: assignment.assignment_created,
+      assignment_updated: assignment.assignment_updated
+      // Add other properties as needed
+    };
+    res.status(201).send(resAssignment);
   } catch (error) {
     if(error instanceof ValidationError){
 
-      res.status(403).send()
+      res.status(400).send()
     }
-    console.log(error);
-    res.status(403).send();
+    // console.log(error);
+    // res.status(403).send();
   }
 };
 
 // Get all assignments
 const getAllAssignments = async (req, res) => {
   try {
-    const assignments = await Assignment.findAll()
+    const assignments = await Assignment.findAll({
+      attributes: {
+          exclude: ['userId']
+      }
+    })
     const contentLength = parseInt(req.get("Content-Length") || "0", 10);
     if (Object.keys(req.query).length > 0 || contentLength > 0) {
       return res.status(400).send();
@@ -46,7 +70,7 @@ const getAllAssignments = async (req, res) => {
     
     }
   } catch (error) {
-    res.status(403).send();
+    res.status(400).send();
   }
 };
 
@@ -58,7 +82,11 @@ const getAssignmentById = async (req, res) => {
   }
   const { id } = req.params;
   try {
-    const assignments = await Assignment.findByPk(id);
+    const assignments = await Assignment.findByPk(id, {
+      attributes: {
+          exclude: ['userId']
+      }
+    });
     if (assignments == null) {
       res.status(404).send();
     } else {
@@ -66,7 +94,7 @@ const getAssignmentById = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(403).send();
+    res.status(400).send();
   }
 };
 
@@ -76,12 +104,29 @@ const updateAssignment = async (req, res) => {
   const { id } = req.params;
   const userId = req.User.id;
   try {
+    const contentLength = parseInt(req.get('Content-Length') || '0', 10)
+    if (contentLength == 0) {
+      res.status(400).send();
+    }
+    if (typeof name !== 'string' ||
+    typeof points !== 'number' ||
+    typeof num_of_attempts !== 'number' ||
+    typeof deadline !== 'string' ||
+    !name || !points || !num_of_attempts || !deadline) {
+      return res.status(400).send();
+    }
+    if (!Number.isInteger(points) || !Number.isInteger(num_of_attempts)) {
+      return res.status(400).send();
+    }
+    if (Object.keys(req.body).every(key => ['name', 'points', 'num_of_attempts', 'deadline'].includes(key)) === false) {
+      return res.status(400).send();
+    }
     const assignment = await Assignment.findByPk(id);
     if (assignment == null) {
-      res.status(400).send();
+      res.status(404).send();
     } else {
       if (userId != assignment.userId) {
-        res.status(401).send();
+        res.status(403).send();
       } else {
         assignment.name = name;
         assignment.points = points;
@@ -93,7 +138,7 @@ const updateAssignment = async (req, res) => {
     }
   } catch (e) {
     console.log(e);
-    res.status(403).send();
+    res.status(400).send();
   }
 };
 //delete assignment
@@ -110,7 +155,7 @@ const deleteAssignment = async (req, res) => {
       res.status(404).send();
     } else {
       if (userId != assignment.userId) {
-        res.status(401).send();
+        res.status(403).send();
       } else {
         await assignment.destroy();
         res.status(204).send();

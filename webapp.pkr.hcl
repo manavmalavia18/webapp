@@ -109,7 +109,8 @@ build {
       "sudo mv /home/admin/webapp_main/systemd_packer.service /lib/systemd/system",
       "npm install",
       "npm install nodemon",
-      "bash /home/admin/webapp_main/setup.sh",
+      "chmod +x setup.sh",  # Make the script executable
+      "./setup.sh",
     ]
   }
 

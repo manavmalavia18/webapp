@@ -90,6 +90,8 @@ build {
       "sudo mysql -e \"GRANT ALL ON *.* TO '${var.database_user}'@'localhost' IDENTIFIED BY '${var.database_pass}';\"",
       "sudo apt install nodejs npm -y",
       "sudo apt install -y unzip",
+      "sudo groupadd csye6225",
+      "sudo useradd -s /bin/false -g csye6225 -d /home/admin -m csye6225",
     ]
   }
   provisioner "file" {
@@ -103,12 +105,34 @@ build {
       "sudo ls -al",
       "unzip webapp.zip -d webapp_main",
       "sudo mv /home/admin/webapp_main/user.csv /opt",
+      "sudo mv /home/admin/webapp_main/systemd_packer.service /lib/systemd/system",
       "sudo ls -al",
       "cd webapp_main",
       "npm install",
       "npm install nodemon",
     ]
   }
+  provisioner "shell" {
+  inline = [
+    "[Unit]",
+    "Description=webapp_start",
+    "After=network.target",
+    "ConditionPathExists=/home/admin/webapp_main",
+    "",
+    "[Service]",
+    "Type=simple",
+    "Environment=NODE_PORT=3000",
+    "User=csye6225",
+    "Group=csye6225",
+    "WorkingDirectory=/home/admin/webapp_main",
+    "ExecStart=/usr/bin/node /home/admin/webapp_main/index.js",
+    "Restart=on-failure",
+    "RestartSec=3",
+    "",
+    "[Install]",
+    "WantedBy=multi-user.target",
+  ]
+}
 
 
 }

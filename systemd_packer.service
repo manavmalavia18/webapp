@@ -2,7 +2,7 @@
 
 [Unit]
 
-Description=webapp_start 
+Description=systemd_packer
 After=network.target
 ConditionPathExists=/home/admin/webapp_main
 

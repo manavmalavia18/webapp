@@ -4,7 +4,7 @@
 sudo systemctl daemon-reload
 
 # Start the service
-sudo systemctl start webapp_start
+sudo systemctl start systemd_packer
 
 # Enable the service to start on boot
-sudo systemctl enable webapp_start
+sudo systemctl enable systemd_packer

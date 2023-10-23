@@ -1,19 +1,10 @@
 #!/bin/bash
 
-# Update the package repository
-sudo apt update
+# Reload systemd to apply changes to service unit files
+sudo systemctl daemon-reload
 
-# Upgrade installed packages
-sudo apt upgrade -y
+# Start the service
+sudo systemctl start webapp_start
 
-# Install MariaDB Server
-sudo apt install -y mariadb-server
-
-# Secure MariaDB installation (you will be prompted for settings)
-sudo mariadb_secure_installation
-
-# Install Node.js modules using npm
-sudo apt install nodejs npm -y
-
-# Install the 'unzip' utility (if not already installed)
-sudo apt install -y unzip
+# Enable the service to start on boot
+sudo systemctl enable webapp_start

@@ -104,35 +104,12 @@ build {
       "echo web app zip process",
       "sudo ls -al",
       "unzip webapp.zip -d webapp_main",
+      "cd webapp_main",
       "sudo mv /home/admin/webapp_main/user.csv /opt",
       "sudo mv /home/admin/webapp_main/systemd_packer.service /lib/systemd/system",
-      "sudo ls -al",
-      "cd webapp_main",
       "npm install",
       "npm install nodemon",
     ]
   }
-  provisioner "shell" {
-  inline = [
-    "[Unit]",
-    "Description=webapp_start",
-    "After=network.target",
-    "ConditionPathExists=/home/admin/webapp_main",
-    "",
-    "[Service]",
-    "Type=simple",
-    "Environment=NODE_PORT=3000",
-    "User=csye6225",
-    "Group=csye6225",
-    "WorkingDirectory=/home/admin/webapp_main",
-    "ExecStart=/usr/bin/node /home/admin/webapp_main/index.js",
-    "Restart=on-failure",
-    "RestartSec=3",
-    "",
-    "[Install]",
-    "WantedBy=multi-user.target",
-  ]
-}
-
 
 }

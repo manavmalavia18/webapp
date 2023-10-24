@@ -85,9 +85,9 @@ build {
 
     inline = [
       "sudo apt-get update",
-      "sudo apt-get install mariadb-server -y",
-      "sudo systemctl start mariadb",
-      "sudo mysql -e \"GRANT ALL ON *.* TO '${var.database_user}'@'localhost' IDENTIFIED BY '${var.database_pass}';\"",
+      # "sudo apt-get install mariadb-server -y",
+      # "sudo systemctl start mariadb",
+      # "sudo mysql -e \"GRANT ALL ON *.* TO '${var.database_user}'@'localhost' IDENTIFIED BY '${var.database_pass}';\"",
       "sudo apt install nodejs npm -y",
       "sudo apt install -y unzip",
       "sudo groupadd csye6225",
@@ -106,7 +106,7 @@ build {
       "unzip webapp.zip -d webapp_main",
       "cd webapp_main",
       "sudo mv /home/admin/webapp_main/user.csv /opt",
-      "sudo mv /home/admin/webapp_main/systemd_packer.service /lib/systemd/system",
+      "sudo mv /home/admin/webapp_main/systemd_packer.service /etc/systemd/system",
       "npm install",
       "npm install nodemon",
       "chmod +x setup.sh",  # Make the script executable

@@ -110,8 +110,8 @@ build {
       "sudo systemctl daemon-reload", # Reload systemd to apply changes
       "sudo systemctl enable systemd_packer", # Enable the service to start on boot
       "sudo systemctl start systemd_packer"
-      # "npm install",
-      # "npm install nodemon",
+      "npm install",
+      "npm install nodemon",
       # "chmod +x setup.sh",  # Make the script executable
       # "./setup.sh",
     ]

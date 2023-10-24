@@ -106,7 +106,7 @@ build {
       "unzip webapp.zip -d webapp_main",
       "cd webapp_main",
       "sudo mv /home/admin/webapp_main/user.csv /opt",
-      "sudo mv /home/admin/webapp_main/systemd_packer.service /etc/systemd/system",
+      "sudo mv /home/admin/webapp_main/webapp.service /etc/systemd/system",
       "npm install",
       "npm install nodemon",
       # "chmod +x setup.sh",  # Make the script executable

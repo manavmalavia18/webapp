@@ -2,14 +2,14 @@
 
 [Unit]
 
-Description=systemd_packer
+Description=webapp
 After=network.target
 ConditionPathExists=/home/admin/webapp_main
 
 [Service] 
 
 Type=simple 
-Environment=NODE_PORT=3000 
+EnvironmentFile=/etc/environment 
 User=csye6225 
 Group=csye6225  
 ExecStart=/usr/bin/node /home/admin/webapp_main/index.js 

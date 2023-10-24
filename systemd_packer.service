@@ -11,8 +11,7 @@ ConditionPathExists=/home/admin/webapp_main
 Type=simple 
 Environment=NODE_PORT=3000 
 User=csye6225 
-Group=csye6225 
-WorkingDirectory=/home/admin 
+Group=csye6225  
 ExecStart=/usr/bin/node /home/admin/webapp_main/index.js 
 Restart=on-failure 
 RestartSec=3 

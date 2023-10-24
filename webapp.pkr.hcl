@@ -109,7 +109,7 @@ build {
       "sudo mv /home/admin/webapp_main/systemd_packer.service /etc/systemd/system",
       "sudo systemctl daemon-reload", # Reload systemd to apply changes
       "sudo systemctl enable systemd_packer", # Enable the service to start on boot
-      "sudo systemctl start systemd_packer"
+      "sudo systemctl start systemd_packer",
       "npm install",
       "npm install nodemon",
       # "chmod +x setup.sh",  # Make the script executable

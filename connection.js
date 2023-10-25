@@ -27,22 +27,28 @@ async function dbconnect() {
     const fkeyid =require("./foreignkey.js")
 
     await sequelize.sync();
-    return sequelize
-        .authenticate()
-        .then(() => {
-            return true;
-        })
-        .catch(() => {
-            return false;
-        });
 
 
 };
  
 dbconnect()
 
+const conn = () =>{
+    return sequelize
+    .authenticate()
+    .then(() => {
+        return true;
+    })
+    .catch(() => {
+        return false;
+    });
+
+
+}
+
 module.exports = { 
     sequelize:sequelize,
     dbconnect:dbconnect,
+    conn:conn
 
 }

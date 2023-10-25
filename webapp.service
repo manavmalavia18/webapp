@@ -13,7 +13,7 @@ EnvironmentFile=/etc/environment
 User=csye6225_manav
 Group=csye6225_users  
 ExecStart=/usr/bin/node /opt/webapp/index.js 
-Restart=on-failure 
+Restart=always
 RestartSec=3 
 
 [Install]

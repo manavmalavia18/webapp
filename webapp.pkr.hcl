@@ -90,8 +90,8 @@ build {
       # "sudo mysql -e \"GRANT ALL ON *.* TO '${var.database_user}'@'localhost' IDENTIFIED BY '${var.database_pass}';\"",
       "sudo apt install nodejs npm -y",
       "sudo apt install -y unzip",
-      "sudo groupadd csye6225",
-      "sudo useradd -s /bin/false -g csye6225 -d /home/admin -m csye6225",
+      "sudo groupadd csye6225_users",
+      "sudo useradd -s /bin/false -g csye6225_users -d /opt/webapp -m csye6225_manav",
     ]
   }
   provisioner "file" {
@@ -103,10 +103,11 @@ build {
     inline = [
       "echo web app zip process",
       "sudo ls -al",
-      "unzip webapp.zip -d webapp_main",
-      "cd webapp_main",
-      "sudo mv /home/admin/webapp_main/user.csv /opt",
-      "sudo mv /home/admin/webapp_main/webapp.service /etc/systemd/system",
+      "sudo cp webapp.zip /opt/webapp",
+      "cd /opt/webapp",
+      "unzip webapp.zip",
+      "sudo mv user.csv /opt",
+      "sudo mv webapp.service /etc/systemd/system",
       "npm install",
       "npm install nodemon",
       "sudo systemctl daemon-reload",

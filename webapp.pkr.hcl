@@ -109,6 +109,9 @@ build {
       "sudo mv /home/admin/webapp_main/webapp.service /etc/systemd/system",
       "npm install",
       "npm install nodemon",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable webapp",
+      "sudo systemctl start webapp",
       # "chmod +x setup.sh",  # Make the script executable
       # "./setup.sh",
     ]

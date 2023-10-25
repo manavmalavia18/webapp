@@ -46,7 +46,7 @@ app.all('/healthz', async (request, response) => {
     }
 
     try {
-        const connection = await db.dbconnect();
+        const connection = await db.conn();
         console.log(connection)
         if (connection == true) {
             response.status(200).send();
@@ -56,7 +56,7 @@ app.all('/healthz', async (request, response) => {
         }
     } catch (error) {
         console.error(error);
-        response.status(500).send(); 
+        response.status(503).send(); 
     }
 });
 

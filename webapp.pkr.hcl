@@ -107,8 +107,8 @@ build {
       "sudo mv webapp.service /etc/systemd/system",
       "sudo npm install",
       "sudo npm install nodemon",
-      "sudo chown -R csye6225_manav:csye6225_users /opt/webapp"
-      "sudo chmod g+x /opt/webapp"
+      "sudo chown -R csye6225_manav:csye6225_users /opt/webapp",
+      "sudo chmod g+x /opt/webapp",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable webapp",
       "sudo systemctl start webapp",

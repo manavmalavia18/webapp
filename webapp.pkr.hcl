@@ -85,9 +85,6 @@ build {
 
     inline = [
       "sudo apt-get update",
-      # "sudo apt-get install mariadb-server -y",
-      # "sudo systemctl start mariadb",
-      # "sudo mysql -e \"GRANT ALL ON *.* TO '${var.database_user}'@'localhost' IDENTIFIED BY '${var.database_pass}';\"",
       "sudo apt install nodejs npm -y",
       "sudo apt install -y unzip",
       "sudo groupadd csye6225_users",
@@ -110,19 +107,12 @@ build {
       "sudo mv webapp.service /etc/systemd/system",
       "sudo npm install",
       "sudo npm install nodemon",
+      "sudo chown -R csye6225_manav:csye6225_users /opt/webapp"
+      "sudo chmod g+x /opt/webapp"
       "sudo systemctl daemon-reload",
       "sudo systemctl enable webapp",
       "sudo systemctl start webapp",
-      # "chmod +x setup.sh",  # Make the script executable
-      # "./setup.sh",
     ]
   }
-  # provisioner "shell" {
-  #   inline = [
-  #     "sudo systemctl daemon-reload",         # Reload systemd to apply changes
-  #     "sudo systemctl enable systemd_packer", # Enable the service to start on boot
-  #     "sudo systemctl start systemd_packer",
-  #   ]
-  # }
 
 }

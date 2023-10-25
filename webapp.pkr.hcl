@@ -105,7 +105,7 @@ build {
       "sudo ls -al",
       "sudo cp webapp.zip /opt/webapp",
       "cd /opt/webapp",
-      "unzip webapp.zip",
+      "sudo unzip webapp.zip",
       "sudo mv user.csv /opt",
       "sudo mv webapp.service /etc/systemd/system",
       "npm install",

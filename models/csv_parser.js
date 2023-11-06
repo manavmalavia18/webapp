@@ -6,7 +6,7 @@ const dbconnect = require('../connection.js');
 const User = require('../models/user.js').User;
 const { createLogger, transports, format } = require('winston');
 
-// Create a logger with a File transport
+
 const logger = createLogger({
   level: 'info',
   format: format.combine(
@@ -15,8 +15,8 @@ const logger = createLogger({
     format.json()
   ),
   transports: [
-    new transports.Console(), // Log to the console
-    new transports.File({ filename: '/var/log' }), // Log to a file (customize the filename as needed)
+    new transports.Console(), 
+    new transports.File({ filename: '/var/log/webapp.log' }), 
   ],
 });
 

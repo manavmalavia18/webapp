@@ -27,7 +27,7 @@ const errorLogger = winston.createLogger({
   format: logFormat,
   transports: [
     new winston.transports.Console(),
-    new winston.transports.File({ filename: "/var/log" }),
+    new winston.transports.File({ filename: "/var/log/webapp.log" }),
   ],
 });
 

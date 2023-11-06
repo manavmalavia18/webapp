@@ -98,6 +98,16 @@ build {
 
   provisioner "shell" {
     inline = [
+      "sudo apt-get install -y gpg",
+      "wget https://s3.amazonaws.com/amazoncloudwatch-agent/debian/amd64/latest/amazon-cloudwatch-agent.deb",
+      "sudo dpkg -i -E amazon-cloudwatch-agent.deb",
+      "sudo systemctl enable amazon-cloudwatch-agent",
+      "sudo systemctl start amazon-cloudwatch-agent",
+    ]
+  }
+
+  provisioner "shell" {
+    inline = [
       "echo web app zip process",
       "sudo ls -al",
       "sudo cp webapp.zip /opt/webapp",

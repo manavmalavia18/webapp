@@ -7,6 +7,9 @@ const User = require("../models/user").User;
 const Assignment = require("../models/assignments.js").assignment;
 const winston = require("winston");
 
+const statsd=require("node-statsd")
+const stats= new statsd({host:"localhost",port:8125})
+
 const logFormat = winston.format.combine(
   winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
   winston.format.printf(({ timestamp, level, message, lineNumber, source, errorType }) => {
@@ -40,6 +43,7 @@ function logError(errorType, errorMessage) {
 
 
 const createAssignment = async (req, res) => {
+  stats.increment(`api.assignments.create.calls`)
   const userId = req.User.id;
   const { name, points, num_of_attempts, deadline } = req.body;
   try {
@@ -108,6 +112,7 @@ const createAssignment = async (req, res) => {
 };
 
 const getAllAssignments = async (req, res) => {
+  stats.increment(`api.assignments.get.calls`)
   try {
     const assignments = await Assignment.findAll({
       attributes: {
@@ -128,6 +133,7 @@ const getAllAssignments = async (req, res) => {
 };
 
 const getAssignmentById = async (req, res) => {
+  stats.increment(`api.assignments.getid.calls`)
   const contentLength = parseInt(req.get("Content-Length") || "0", 10);
   if (Object.keys(req.query).length > 0 || contentLength > 0) {
     logError("ClientError", "Invalid query or content length");
@@ -153,6 +159,7 @@ const getAssignmentById = async (req, res) => {
 };
 
 const updateAssignment = async (req, res) => {
+  stats.increment(`api.assignments.update.calls`)
   const { name, points, num_of_attempts, deadline } = req.body;
   const { id } = req.params;
   const userId = req.User.id;
@@ -224,6 +231,7 @@ const updateAssignment = async (req, res) => {
 };
 
 const deleteAssignment = async (req, res) => {
+  stats.increment(`api.assignments.delete.calls`)
   const contentLength = parseInt(req.get("Content-Length") || "0", 10);
   if (Object.keys(req.query).length > 0 || contentLength > 0) {
     logError("ClientError", "Invalid query or content length");
@@ -258,4 +266,5 @@ module.exports = {
   getAssignmentById: getAssignmentById,
   updateAssignment: updateAssignment,
   deleteAssignment: deleteAssignment,
+  stats:stats,
 };

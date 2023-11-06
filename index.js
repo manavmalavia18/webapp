@@ -6,7 +6,7 @@ const path = require('path');
 const db = require("./connection.js");
 const csv = require('./models/csv_parser.js');
 const basicAuthMiddleware = require("./middleware/authentication");
-const assignment_controllers = require("./controllers/assignment_controllers");
+const assignment_controllers = require("./controllers/assignment_controllers.js");
 // const { match } = require('assert');
 const PORT = 3000;
 
@@ -76,7 +76,8 @@ app.patch('/v1/assignments', (req, res) => {
 });
 
 // Health Check Route
-app.all('/healthz', async (req, res) => { 
+app.all('/healthz', async (req, res) => {
+  assignment_controllers.stats.increment(`healthz.api.calls`)
     res.setHeader('Cache-Control', 'no-cache');
     if (req.method !== "GET") {
         res.status(405).send();

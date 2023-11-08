@@ -7,7 +7,7 @@ const db = require("./connection.js");
 const csv = require('./models/csv_parser.js');
 const basicAuthMiddleware = require("./middleware/authentication");
 const assignment_controllers = require("./controllers/assignment_controllers.js");
-// const { match } = require('assert');
+
 const PORT = 3000;
 
 // Custom error formatter
@@ -75,7 +75,7 @@ app.patch('/v1/assignments', (req, res) => {
     });
 });
 
-// Health Check Route
+
 app.all('/healthz', async (req, res) => {
   assignment_controllers.stats.increment(`healthz.api.calls`)
     res.setHeader('Cache-Control', 'no-cache');
@@ -131,7 +131,7 @@ app.all('/*', (req, res) => {
     res.status(404).send();
     logger.error({
       errorcode: "404",
-      message: "Url Not Found",
+      message: "Link Url Not Found",
       method: req.method,
       userurl: req.originalUrl,
       location: __filename, 

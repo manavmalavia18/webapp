@@ -31,20 +31,18 @@ async function dbconnect() {
 
     await pool.getConnection().then((connection) => {
         connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\`;`);
-        // logger.info(`Database "${process.env.DB_NAME}" created or already exists.`);
+        logger.info(`Database "${process.env.DB_NAME}" created or already exists.`);
     });
 
     const User = require('./models/user');
-    // logger.info("User model imported");
 
     const Assignment = require('./models/assignments.js');
-    // logger.info("Assignment model imported");
+
 
     const fkeyid = require("./foreignkey.js");
-    // logger.info("Foreign key model imported");
 
     await sequelize.sync();
-    // logger.info("Database synchronized with models.");
+    logger.info("Database synchronized with models.");
 }
 
 dbconnect();
@@ -53,7 +51,7 @@ const conn = () => {
     return sequelize
         .authenticate()
         .then(() => {
-            // logger.info("Connected to the database.");
+            logger.info("Connected to the database.");
             return true;
         })
         .catch((error) => {

@@ -58,5 +58,4 @@ async function loadUsersFromCSV() {
 
 loadUsersFromCSV();
 
-// Call the function to load users from CSV at startup
 module.exports = { loadUsersFromCSV: loadUsersFromCSV };

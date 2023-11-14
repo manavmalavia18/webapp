@@ -7,7 +7,6 @@ const db = require("./connection.js");
 const csv = require('./models/csv_parser.js');
 const basicAuthMiddleware = require("./middleware/authentication");
 const assignment_controllers = require("./controllers/assignment_controllers.js");
-const axios = require('axios');
 
 const PORT = 3000;
 
@@ -37,7 +36,6 @@ const errorFormatter = format((info) => {
   }
   return info;
 });
-
 let instanceId = null;
 axios.get('http://169.254.169.254/latest/meta-data/instance-id')
     .then(response => {

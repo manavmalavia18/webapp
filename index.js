@@ -7,7 +7,7 @@ const db = require("./connection.js");
 const csv = require('./models/csv_parser.js');
 const basicAuthMiddleware = require("./middleware/authentication");
 const assignment_controllers = require("./controllers/assignment_controllers.js");
-
+const axios = require('axios');
 const PORT = 3000;
 
 // Custom error formatter
@@ -37,12 +37,25 @@ const errorFormatter = format((info) => {
   return info;
 });
 
+let instanceId = null;
+axios.get('http://169.254.169.254/latest/meta-data/instance-id')
+    .then(response => {
+        instanceId = response.data;
+    })
+    .catch(error => console.error('Error fetching instance ID:', error));
+
 // Winston Logger Configuration
 const logger = winston.createLogger({
   level: 'info',
   format: format.combine(
     format.timestamp(),
     format.errors({ stack: true }),
+    format((info) => {
+      if (instanceId) {
+          info.instanceId = instanceId;
+      }
+      return info;
+  })(),
     errorFormatter(),
     format.json()
   ),

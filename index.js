@@ -125,6 +125,7 @@ app.all('/healthz', async (req, res) => {
             throw new Error('Failed to connect to the database');
         }
         res.status(200).send();
+        logger.info('Healthz checkpoint connected succesfully')
     } catch (error) {
         res.status(503).send();
         logger.error({

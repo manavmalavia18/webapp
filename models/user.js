@@ -23,7 +23,16 @@ const User = sequelize.define("users", {
   password: {
     type: DataTypes.STRING,
     allowNull: false,
-  }},
+  },
+  role: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      isIn: [[0, 1]] // Ensures the role is either 0 (professor) or 1 (student)
+    }
+    // 0 for professor, 1 for student
+  }
+},
   {
     timestamps:true,
     createdAt:'account_created',

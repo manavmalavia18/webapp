@@ -19,6 +19,12 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
     host: process.env.DB_HOST,
     logging: false,
     dialect: process.env.DIALECT,
+    pool: {
+        max: 10, 
+        min: 0, 
+        idle: 10000, 
+        acquire: 30000, 
+    },
 });
 
 const pool = mariadb.createPool({
@@ -31,15 +37,18 @@ async function dbconnect() {
 
     await pool.getConnection().then((connection) => {
         connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\`;`);
+        connection.release();
         logger.info(`Database "${process.env.DB_NAME}" created or already exists.`);
     });
 
     const User = require('./models/user');
 
     const Assignment = require('./models/assignments.js');
+    // const fkeyid = require("./foreignkey.js");
 
+    const submission=require('./models/submission.js')
 
-    const fkeyid = require("./foreignkey.js");
+    
 
     await sequelize.sync();
     logger.info("Database synchronized with models.");
@@ -48,16 +57,24 @@ async function dbconnect() {
 dbconnect();
 
 const conn = () => {
-    return sequelize
-        .authenticate()
-        .then(() => {
-            logger.info("Connected to the database.");
-            return true;
-        })
-        .catch((error) => {
-            logger.error("Failed to connect to the database:");
-            return false;
-        });
+    // return sequelize
+    //     .authenticate()
+    //     .then(() => {
+    //         logger.info("Connected to the database.");
+    //         return true;
+    //     })
+        // .catch((error) => {
+        //     logger.error("Failed to connect to the database:");
+        //     return false;
+        // });
+    return pool.getConnection().then((connection) => {
+        connection.release()
+        return true
+    })
+    .catch((error) => {
+        logger.error("Failed to connect to the database:");
+        return false;
+    });
 }
 
 module.exports = {

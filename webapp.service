@@ -3,7 +3,7 @@
 [Unit]
 
 Description=webapp
-After=network.target
+After=cloud-final.service
 ConditionPathExists=/opt/webapp
 
 [Service] 
@@ -19,4 +19,4 @@ StandardOutput=append:/var/log/webapp.log
 
 [Install]
 
-WantedBy=multi-user.target
+WantedBy=cloud-init.target

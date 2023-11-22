@@ -73,7 +73,7 @@ app.get('/v1/assignments', basicAuthMiddleware.basicAuthMiddleware, assignment_c
 app.get('/v1/assignments/:id', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.getAssignmentById);
 app.put('/v1/assignments/:id', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.updateAssignment);
 app.delete('/v1/assignments/:id', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.deleteAssignment);
-
+app.post('/submit/v1/assignments/:id', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.submitAssignment);
 app.patch('/v1/assignments', (req, res) => {
     res.status(405).send();
     logger.error({

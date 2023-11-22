@@ -5,11 +5,30 @@ const { assignment } = require("../models/assignments.js");
 const { ValidationError } = require("sequelize");
 const User = require("../models/user").User;
 const Assignment = require("../models/assignments.js").assignment;
+const Submission=require('../models/submission.js').Submission
 const winston = require("winston");
+const AWS = require('aws-sdk');
 
+// statsd
 const statsd=require("node-statsd")
 const stats= new statsd({host:"localhost",port:8125})
 
+//sns
+const sns = new AWS.SNS();
+
+function notifySubmission(url, userEmail) {
+    const params = {
+        TopicArn: 'webapp-sns', 
+        Message: `New submission: ${url}, User: ${userEmail}`,
+    };
+    sns.publish(params, (err, data) => {
+        if (err) console.error('Error publishing to SNS:', err);
+        else console.log(`Notification sent: ${data}`);
+    });
+}
+
+
+ //logging
 const logFormat = winston.format.combine(
   winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
   winston.format.printf(({ timestamp, level, message, lineNumber, source, errorType }) => {
@@ -45,6 +64,11 @@ function logError(errorType, errorMessage) {
 const createAssignment = async (req, res) => {
   stats.increment(`api.assignments.create.calls`)
   const userId = req.User.id;
+  const userRole = req.User.role;
+  if (userRole !== 0) { // Check if the user is not a student
+    logError("ClientError", "students cannot create assignments");
+    return res.status(403).send('students cannot create assignments');
+  }
   const { name, points, num_of_attempts, deadline } = req.body;
   try {
     const contentLength = parseInt(req.get("Content-Length") || "0", 10);
@@ -113,6 +137,10 @@ const createAssignment = async (req, res) => {
 
 const getAllAssignments = async (req, res) => {
   stats.increment(`api.assignments.get.calls`)
+  if (req.User.role !== 0) {
+    logError("ClientError", "Only professors can view all assignments");
+    return res.status(403).send('Only professors can view all assignments');
+  }
   try {
     const assignments = await Assignment.findAll({
       attributes: {
@@ -134,6 +162,10 @@ const getAllAssignments = async (req, res) => {
 
 const getAssignmentById = async (req, res) => {
   stats.increment(`api.assignments.getid.calls`)
+  if (req.User.role !== 0) {
+    logError("ClientError", "Only professors can view all assignments");
+    return res.status(403).send('Only professors can view all assignments');
+  }
   const contentLength = parseInt(req.get("Content-Length") || "0", 10);
   if (Object.keys(req.query).length > 0 || contentLength > 0) {
     logError("ClientError", "Invalid query or content length");
@@ -160,6 +192,11 @@ const getAssignmentById = async (req, res) => {
 
 const updateAssignment = async (req, res) => {
   stats.increment(`api.assignments.update.calls`)
+  const userRole = req.User.role;
+  if (userRole !== 0) { // Check if the user is not a student
+    logError("ClientError", "students cannot update assignments");
+    return res.status(403).send('students cannot update assignments');
+  }
   const { name, points, num_of_attempts, deadline } = req.body;
   const { id } = req.params;
   const userId = req.User.id;
@@ -232,6 +269,11 @@ const updateAssignment = async (req, res) => {
 
 const deleteAssignment = async (req, res) => {
   stats.increment(`api.assignments.delete.calls`)
+  const userRole = req.User.role;
+  if (userRole !== 0) { // Check if the user is not a student
+    logError("ClientError", "students cannot delete assignments");
+    return res.status(403).send('students cannot delete assignments');
+  }
   const contentLength = parseInt(req.get("Content-Length") || "0", 10);
   if (Object.keys(req.query).length > 0 || contentLength > 0) {
     logError("ClientError", "Invalid query or content length");
@@ -258,6 +300,68 @@ const deleteAssignment = async (req, res) => {
   }
 };
 
+const submitAssignment = async (req, res) => {
+  stats.increment(`api.assignments.submit.calls`);
+  const { submission_url } = req.body; 
+  const { id } = req.params; 
+  const userId = req.User.id; 
+  const userEmail = req.User.email;
+
+  try {
+      const assignmentRecord = await Assignment.findByPk(id);
+
+      if (!assignmentRecord) {
+          return res.status(404).send('Assignment not found');
+      }
+
+      if (userId === assignmentRecord.userId) {
+          logError("ClientError", "Assignment creator cannot submit to their own assignment");
+          return res.status(403).send('Assignment creator cannot submit to their own assignment');
+      }
+
+      const currentDateTime = new Date();
+      const assignmentDeadline = new Date(assignmentRecord.deadline);
+      if (currentDateTime > assignmentDeadline) {
+          return res.status(400).send('Assignment deadline has passed');
+      }
+
+      const [submission, created] = await Submission.findOrCreate({
+          where: { UserId: userId, AssignmentId: id },
+          defaults: { attempts: 0 }
+      });
+
+      if (submission.attempts >= assignmentRecord.num_of_attempts) {
+          return res.status(400).send('Maximum submission attempts exceeded');
+      }
+
+      submission.attempts += 1;
+      await submission.save();
+
+      
+      const submissionResponse = {
+          user_id: userId,
+          assignment_id: id,
+          submission_url: submission_url, 
+          submission_date: submission.createdAt,
+          assignment_updated: assignmentRecord.assignment_updated,
+      };
+      
+      try {
+        await notifySubmission(submission_url, userEmail);
+        console.log('SNS notification sent');
+      } catch (snsError) {
+        console.error('Error sending SNS notification:', snsError);
+        // Decide how you want to handle SNS errors, e.g., log them or send a different response
+      }
+
+      res.status(201).json(submissionResponse);
+
+  } catch (error) {
+      console.log(error);
+      res.status(400).send('general error');
+  }
+};
+
 
 
 module.exports = {
@@ -266,5 +370,6 @@ module.exports = {
   getAssignmentById: getAssignmentById,
   updateAssignment: updateAssignment,
   deleteAssignment: deleteAssignment,
+  submitAssignment:submitAssignment,
   stats:stats,
 };

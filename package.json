@@ -11,6 +11,7 @@
   "author": "manav",
   "license": "MIT",
   "dependencies": {
+    "aws-sdk": "^2.1498.0",
     "axios": "^1.6.1",
     "basic-auth": "^2.0.1",
     "bcrypt": "^5.1.1",

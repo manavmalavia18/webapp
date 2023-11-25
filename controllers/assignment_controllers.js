@@ -13,19 +13,33 @@ const AWS = require('aws-sdk');
 const statsd=require("node-statsd")
 const stats= new statsd({host:"localhost",port:8125})
 
+AWS.config.update({
+  accessKeyId: process.env.ACCESSKEY,
+  secretAccessKey: process.env.SECRETACCESSKEY,
+  region: 'us-west-2'
+});
+
 //sns
 const sns = new AWS.SNS();
 
+
 function notifySubmission(url, userEmail) {
-    const params = {
-        TopicArn: 'webapp-sns', 
-        Message: `New submission: ${url}, User: ${userEmail}`,
-    };
-    sns.publish(params, (err, data) => {
-        if (err) console.error('Error publishing to SNS:', err);
-        else console.log(`Notification sent: ${data}`);
-    });
+  const message = {
+      submission_url: url,
+      userEmail: userEmail
+  };
+
+  const params = {
+      TopicArn: process.env.TOPICARN, 
+      Message: JSON.stringify(message)
+  };
+
+  sns.publish(params, (err, data) => {
+      if (err) console.error('Error publishing to SNS:', err);
+      else console.log(`Notification sent`);
+  });
 }
+
 
 
  //logging
@@ -343,7 +357,7 @@ const submitAssignment = async (req, res) => {
           assignment_id: id,
           submission_url: submission_url, 
           submission_date: submission.createdAt,
-          assignment_updated: assignmentRecord.assignment_updated,
+          submission_updated: submission.updatedAt,
       };
       
       try {

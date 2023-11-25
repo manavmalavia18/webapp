@@ -54,7 +54,7 @@ async function dbconnect() {
     logger.info("Database synchronized with models.");
 }
 
-dbconnect();
+// dbconnect();
 
 const conn = () => {
     // return sequelize

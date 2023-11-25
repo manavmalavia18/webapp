@@ -27,5 +27,5 @@ Submission.belongsTo(Assignment, { foreignKey: 'AssignmentId' });
 
 module.exports = {
     Submission:Submission,
-    sequelize
+    sequelize:sequelize,
   };

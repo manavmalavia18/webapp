@@ -14,9 +14,7 @@ const statsd=require("node-statsd")
 const stats= new statsd({host:"localhost",port:8125})
 
 AWS.config.update({
-  accessKeyId: process.env.ACCESSKEY,
-  secretAccessKey: process.env.SECRETACCESSKEY,
-  region: 'us-west-2'
+  region: process.env.AWS_REGION
 });
 
 //sns

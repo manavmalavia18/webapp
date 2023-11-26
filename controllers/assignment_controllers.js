@@ -316,63 +316,67 @@ const deleteAssignment = async (req, res) => {
 
 const submitAssignment = async (req, res) => {
   stats.increment(`api.assignments.submit.calls`);
-  const { submission_url } = req.body; 
+  const { submission_url } = req.body;
   const { id } = req.params; 
   const userId = req.User.id; 
   const userEmail = req.User.email;
 
   try {
-      const assignmentRecord = await Assignment.findByPk(id);
+    const assignmentRecord = await Assignment.findByPk(id);
 
-      if (!assignmentRecord) {
-          return res.status(404).send('Assignment not found');
-      }
+    if (!assignmentRecord) {
+      return res.status(404).send('Assignment not found');
+    }
 
-      if (userId === assignmentRecord.userId) {
-          logError("ClientError", "Assignment creator cannot submit to their own assignment");
-          return res.status(403).send('Assignment creator cannot submit to their own assignment');
-      }
+    if (userId === assignmentRecord.userId) {
+      logError("ClientError", "Assignment creator cannot submit to their own assignment");
+      return res.status(403).send('Assignment creator cannot submit to their own assignment');
+    }
 
-      const currentDateTime = new Date();
-      const assignmentDeadline = new Date(assignmentRecord.deadline);
-      if (currentDateTime > assignmentDeadline) {
-          return res.status(400).send('Assignment deadline has passed');
-      }
+    const currentDateTime = new Date();
+    const assignmentDeadline = new Date(assignmentRecord.deadline);
+    if (currentDateTime > assignmentDeadline) {
+      return res.status(400).send('Assignment deadline has passed');
+    }
 
-      const [submission, created] = await Submission.findOrCreate({
-          where: { UserId: userId, AssignmentId: id },
-          defaults: { attempts: 0 }
-      });
+    // Count existing submissions for this assignment by this user
+    const submissionCount = await Submission.count({
+      where: { UserId: userId, AssignmentId: id }
+    });
 
-      if (submission.attempts >= assignmentRecord.num_of_attempts) {
-          return res.status(400).send('Maximum submission attempts exceeded');
-      }
+    // Check if the submission count has reached the limit
+    if (submissionCount >= assignmentRecord.num_of_attempts) {
+      return res.status(400).send('Maximum submission attempts exceeded');
+    }
 
-      submission.attempts += 1;
-      await submission.save();
+    // Create a new submission record
+    const submission = await Submission.create({
+      UserId: userId,
+      AssignmentId: id,
+      submission_url: submission_url
+    });
 
-      
-      const submissionResponse = {
-          user_id: userId,
-          assignment_id: id,
-          submission_url: submission_url, 
-          submission_date: submission.createdAt,
-          submission_updated: submission.updatedAt,
-      };
-      
-      try {
-        await notifySubmission(submission_url, userEmail);
-        console.log('SNS notification sent');
-      } catch (snsError) {
-        console.error('Error sending SNS notification:', snsError);
-        // Decide how you want to handle SNS errors, e.g., log them or send a different response
-      }
+    const submissionResponse = {
+      id: submission.id,
+      assignment_id: id,
+      submission_url: submission_url, 
+      submission_date: submission.createdAt,
+      submission_updated: submission.updatedAt,
+    };
+    
+    try {
+      await notifySubmission(submission_url, userEmail);
+      console.log('SNS notification sent');
+    } catch (snsError) {
+      console.error('Error sending SNS notification:', snsError);
+      // Handle SNS errors as needed
+    }
 
-      res.status(201).json(submissionResponse);
+    res.status(201).send(submissionResponse);
 
   } catch (error) {
-      console.log(error);
-      res.status(400).send('general error');
+    console.log(error);
+    res.status(400).send('General error');
   }
 };
 

@@ -5,13 +5,13 @@ const Assignment=require("../models/assignments").assignment
 
 const Submission = sequelize.define('submission', {
     
-    submission_id: {
+    id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true
       },
-    attempts: {
-        type: DataTypes.INTEGER,
+    submission_url: {
+        type: DataTypes.STRING,
         defaultValue: 0,
         allowNull: false,
     },
@@ -19,9 +19,9 @@ const Submission = sequelize.define('submission', {
 });
 
 Assignment.belongsTo(User)
-User.hasMany(Submission, { foreignKey: 'UserId' });
-Assignment.hasMany(Submission, { foreignKey: 'AssignmentId' });
-Submission.belongsTo(User, { foreignKey: 'UserId' });
+User.hasMany(Submission, { foreignKey: 'UserId', onDelete: 'CASCADE' });
+Assignment.hasMany(Submission, { foreignKey: 'AssignmentId',onDelete: 'CASCADE' });
+Submission.belongsTo(User, { foreignKey: 'UserId', onDelete: 'CASCADE' });
 Submission.belongsTo(Assignment, { foreignKey: 'AssignmentId' });
 
 

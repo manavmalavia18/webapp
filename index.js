@@ -74,6 +74,9 @@ app.get('/v1/assignments/:id', basicAuthMiddleware.basicAuthMiddleware, assignme
 app.put('/v1/assignments/:id', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.updateAssignment);
 app.delete('/v1/assignments/:id', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.deleteAssignment);
 app.post('/v1/assignments/:id/submission', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.submitAssignment);
+app.all('/v1/assignments/:id/submission', (req, res) => {
+  res.status(405).send('Method Not Allowed');
+});
 app.patch('/v1/assignments', (req, res) => {
     res.status(405).send();
     logger.error({

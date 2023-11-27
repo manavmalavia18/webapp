@@ -21,11 +21,16 @@ AWS.config.update({
 const sns = new AWS.SNS();
 
 
-function notifySubmission(url, userEmail) {
+function notifySubmission(url, userEmail, firstName, lastName, assignmentName, submissionTime) {
   const message = {
       submission_url: url,
-      userEmail: userEmail
+      userEmail: userEmail,
+      firstName: firstName,
+      lastName: lastName,
+      assignmentName: assignmentName,
+      submissionTime: submissionTime
   };
+  console.log(message)
 
   const params = {
       TopicArn: process.env.TOPICARN, 
@@ -34,9 +39,10 @@ function notifySubmission(url, userEmail) {
 
   sns.publish(params, (err, data) => {
       if (err) console.error('Error publishing to SNS:', err);
-      else console.log(`Notification sent`);
+      else console.log(`Notification sent, Message ID: ${data.MessageId}`);
   });
 }
+
 
 
 
@@ -321,10 +327,19 @@ const submitAssignment = async (req, res) => {
 
   try {
     const assignmentRecord = await Assignment.findByPk(id);
+    const userRecord = await User.findByPk(userId);
 
     if (!assignmentRecord) {
       return res.status(404).send('Assignment not found');
     }
+
+    if (!userRecord) {
+      return res.status(404).send('User not found');
+    }
+
+    const firstName = userRecord.first_name;
+    const lastName = userRecord.last_name;
+    const assignmentName = assignmentRecord.name;
 
     if (userId === assignmentRecord.userId) {
       logError("ClientError", "Assignment creator cannot submit to their own assignment");
@@ -337,22 +352,28 @@ const submitAssignment = async (req, res) => {
       return res.status(400).send('Assignment deadline has passed');
     }
 
-    // Count existing submissions for this assignment by this user
     const submissionCount = await Submission.count({
       where: { UserId: userId, AssignmentId: id }
     });
 
-    // Check if the submission count has reached the limit
     if (submissionCount >= assignmentRecord.num_of_attempts) {
       return res.status(400).send('Maximum submission attempts exceeded');
     }
 
-    // Create a new submission record
     const submission = await Submission.create({
       UserId: userId,
       AssignmentId: id,
       submission_url: submission_url
     });
+
+    const submissionTime = submission.createdAt.toISOString();
+
+    try {
+      await notifySubmission(submission_url, userEmail, firstName, lastName, assignmentName, submissionTime);
+      console.log('SNS notification sent');
+    } catch (snsError) {
+      console.error('Error sending SNS notification:', snsError);
+    }
 
     const submissionResponse = {
       id: submission.id,
@@ -361,14 +382,6 @@ const submitAssignment = async (req, res) => {
       submission_date: submission.createdAt,
       submission_updated: submission.updatedAt,
     };
-    
-    try {
-      await notifySubmission(submission_url, userEmail);
-      console.log('SNS notification sent');
-    } catch (snsError) {
-      console.error('Error sending SNS notification:', snsError);
-      // Handle SNS errors as needed
-    }
 
     res.status(201).send(submissionResponse);
 

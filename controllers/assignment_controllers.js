@@ -343,7 +343,7 @@ const submitAssignment = async (req, res) => {
 
     if (userId === assignmentRecord.userId) {
       logError("ClientError", "Assignment creator cannot submit to their own assignment");
-      return res.status(400).send('Assignment creator cannot submit to their own assignment');
+      return res.status(403).send('Assignment creator cannot submit to their own assignment');
     }
 
     const currentDateTime = new Date();

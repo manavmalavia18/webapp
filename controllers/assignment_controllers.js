@@ -349,7 +349,7 @@ const submitAssignment = async (req, res) => {
     const currentDateTime = new Date();
     const assignmentDeadline = new Date(assignmentRecord.deadline);
     if (currentDateTime > assignmentDeadline) {
-      return res.status(400).send('Assignment deadline has passed');
+      return res.status(403).send('Assignment deadline has passed');
     }
 
     const submissionCount = await Submission.count({
@@ -357,7 +357,7 @@ const submitAssignment = async (req, res) => {
     });
 
     if (submissionCount >= assignmentRecord.num_of_attempts) {
-      return res.status(400).send('Maximum submission attempts exceeded');
+      return res.status(403).send('Maximum submission attempts exceeded');
     }
 
     const submission = await Submission.create({

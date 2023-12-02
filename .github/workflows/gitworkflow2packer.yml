@@ -74,7 +74,9 @@ jobs:
       # Create New Launch Template Version in the Demo account
       - name: Create New Launch Template Version
         run: |
-          aws ec2 create-launch-template-version --source-version <current-version> --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID}}\"}"
+          
+          aws aws ec2 create-launch-template-version --launch-template-name webapp-launchtemplate --source-version 1 --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID}}\"}"
+
 
       # # Update Autoscaling Group with the new Launch Template version
       # - name: Update Autoscaling Group

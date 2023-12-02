@@ -57,16 +57,36 @@ jobs:
           PKR_VAR_aws_region: "${{secrets.AWS_REGION}}"
           PKR_VAR_source_ami: "${{secrets.SOURCE_AMI}}"
           PKR_VAR_subnet_id: "${{secrets.SUBNET_ID}}"
-        # env:
-        #   PKR_VAR_database: '${{secrets.DB_NAME}}'
-        #   PKR_VAR_database_pass: ${{secrets.DB_PASSWORD}} 
-        #   PKR_VAR_database_user: ${{secrets.DB_USER}}
-        #   PKR_VAR_database_port: ${{secrets.DB_PORT}}
-        #   PKR_VAR_database_host: ${{secrets.DATABASE_HOST}} 
-        #   DIALECT: ${{secrets.DIALECT}} 
-        #   DEFAULTUSERSPATH: '${{secrets.DEFAULTUSERSPATH}}' 
-        #   AMI_USER_DEMO: "${{secrets.AMI_USER_DEMO}}" 
-        #   PKR_VAR_aws-region: "${{ secrets.AWS_REGION }}"
-        #   PKR_VAR_source-ami: "${{ secrets.SOURCE_AMI }}"
-        #   # PKR_VAR_ssh-username: "${{ secrets.SSH_USERNAME }}"
-        #   PKR_VAR_subnet-id: "${{ secrets.SUBNET_ID }}"
+
+      - name: Extract AMI ID
+        run: |
+          NEW_AMI=$(echo "${{ steps.packer_build.outputs.packer_output }}" | grep -oP 'ami-\w+')
+          echo "NEW_AMI=$NEW_AMI" >> $GITHUB_ENV
+
+      # Configure AWS credentials for the demo account
+      - name: Configuring AWS credentials for demo account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.DEMO_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.DEMO_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2 # replace with your demo account region
+
+      # Create New Launch Template Version in the Demo account
+      - name: Create New Launch Template Version
+        run: |
+          aws ec2 create-launch-template-version --source-version <current-version> --launch-template-data "{\"ImageId\":\"${{ env.NEW_AMI }}\"}"
+
+      # # Update Autoscaling Group with the new Launch Template version
+      # - name: Update Autoscaling Group
+      #   run: |
+      #     aws autoscaling update-auto-scaling-group --auto-scaling-group-name <group-name> --launch-template "{\"Version\":\"$TEMPLATE_VERSION\"}"
+
+      # # Instance Refresh for the Autoscaling Group
+      # - name: Instance Refresh
+      #   run: |
+      #     aws autoscaling start-instance-refresh --auto-scaling-group-name <group-name>
+
+      # # Wait for Instance Refresh Completion
+      # - name: Wait for Instance Refresh
+      #   run: |
+      #     # Add your script/logic here to wait for instance refresh to complete

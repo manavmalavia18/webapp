@@ -69,12 +69,6 @@ source "amazon-ebs" "my-ami" {
     volume_type           = "gp2"
   }
 
-  provisioner "shell" {
-    inline = [
-      "echo 'NEW_AMI_ID: {{.BuildName}}' > ami_id.txt",
-    ]
-  }
-
 
 }
 

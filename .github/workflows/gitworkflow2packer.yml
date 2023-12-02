@@ -48,12 +48,13 @@ jobs:
       - name: Initialize packer configuration
         run: packer init webapp.pkr.hcl
 
-      - name: Build AMI with Packer
+      - name: Build AMI and Extract AMI ID
+        id: build-ami
         run: |
           PACKER_OUTPUT=$(packer build webapp.pkr.hcl)
-          echo "PACKER_OUTPUT=$PACKER_OUTPUT" >> $GITHUB_ENV
-          AMI_ID=$(echo "$PACKER_OUTPUT" | grep -oP 'Found Image ID: \K(ami-[a-zA-Z0-9]+)' || echo "$PACKER_OUTPUT" | grep -oP 'AMI: \K(ami-[a-zA-Z0-9]+)')
+          AMI_ID=$(echo "$PACKER_OUTPUT" | grep -oP 'AMI: \K(ami-[a-zA-Z0-9]+)')
           echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
+          echo "::set-output name=ami_id::$AMI_ID"  
         env:
           PKR_VAR_database_pass: ${{secrets.DB_PASSWORD}} 
           PKR_VAR_database_user: ${{secrets.DB_USER}}
@@ -62,10 +63,7 @@ jobs:
           PKR_VAR_source_ami: "${{secrets.SOURCE_AMI}}"
           PKR_VAR_subnet_id: "${{secrets.SUBNET_ID}}"
 
-
-
-
-      # Configure AWS credentials for the demo account
+        # Configure AWS credentials for the demo account
       - name: Configuring AWS credentials for demo account
         uses: aws-actions/configure-aws-credentials@v1
         with:

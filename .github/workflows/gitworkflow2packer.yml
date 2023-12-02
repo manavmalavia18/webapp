@@ -52,8 +52,7 @@ jobs:
         run: |
           PACKER_OUTPUT=$(packer build webapp.pkr.hcl)
           echo "PACKER_OUTPUT=$PACKER_OUTPUT" >> $GITHUB_ENV
-          AMI_ID=$(echo "$PACKER_OUTPUT" | grep -oP 'Found Image ID: \K(ami-[a-zA-Z0-9]+)')
-          AMI_ID=$(echo "$PACKER_OUTPUT" | grep -oP 'AMI: \K(ami-[a-zA-Z0-9]+)')
+          AMI_ID=$(echo "$PACKER_OUTPUT" | grep -oP 'Found Image ID: \K(ami-[a-zA-Z0-9]+)' || echo "$PACKER_OUTPUT" | grep -oP 'AMI: \K(ami-[a-zA-Z0-9]+)')
           echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
           echo "::set-output name=ami_id::$AMI_ID"
         env:
@@ -63,6 +62,7 @@ jobs:
           PKR_VAR_aws_region: "${{secrets.AWS_REGION}}"
           PKR_VAR_source_ami: "${{secrets.SOURCE_AMI}}"
           PKR_VAR_subnet_id: "${{secrets.SUBNET_ID}}"
+
 
 
       - name: Extract AMI ID from Packer
@@ -82,7 +82,7 @@ jobs:
       # Create New Launch Template Version in the Demo account
       - name: Create New Launch Template Version
         run: |
-          aws ec2 create-launch-template-version --source-version <current-version> --launch-template-data "{\"ImageId\":\"${{ env.NEW_AMI }}\"}"
+          aws ec2 create-launch-template-version --source-version <current-version> --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID}}\"}"
 
       # # Update Autoscaling Group with the new Launch Template version
       # - name: Update Autoscaling Group

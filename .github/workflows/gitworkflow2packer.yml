@@ -60,8 +60,7 @@ jobs:
 
       - name: Extract AMI ID
         run: |
-          NEW_AMI=$(echo "${{ steps.packer_build.outputs.packer_output }}" | grep -oP 'ami-\w+')
-          echo "NEW_AMI=$NEW_AMI" >> $GITHUB_ENV
+          NEW_AMI=$(packer build webapp.pkr.hcl 2>&1 | grep -oP 'ami-\w+')
 
       # Configure AWS credentials for the demo account
       - name: Configuring AWS credentials for demo account
@@ -74,17 +73,17 @@ jobs:
       # Create New Launch Template Version in the Demo account
       - name: Create New Launch Template Version
         run: |
-          aws ec2 create-launch-template-version --source-version <current-version> --launch-template-data "{\"ImageId\":\"${{ env.NEW_AMI }}\"}"
+          aws ec2 create-launch-template-version --launch-template-name webapp-launchtemplate --launch-template-data "{\"ImageId\":\"${{ env.NEW_AMI }}\"}"
 
-      # # Update Autoscaling Group with the new Launch Template version
-      # - name: Update Autoscaling Group
-      #   run: |
-      #     aws autoscaling update-auto-scaling-group --auto-scaling-group-name <group-name> --launch-template "{\"Version\":\"$TEMPLATE_VERSION\"}"
+      # Update Autoscaling Group with the new Launch Template version
+      - name: Update Autoscaling Group
+        run: |
+          aws autoscaling update-auto-scaling-group --auto-scaling-group-name webapp-autoscaling --launch-template "{\"Version\":\"$TEMPLATE_VERSION\"}"
 
-      # # Instance Refresh for the Autoscaling Group
-      # - name: Instance Refresh
-      #   run: |
-      #     aws autoscaling start-instance-refresh --auto-scaling-group-name <group-name>
+      # Instance Refresh for the Autoscaling Group
+      - name: Instance Refresh
+        run: |
+          aws autoscaling start-instance-refresh --auto-scaling-group-name webapp-autoscaling
 
       # # Wait for Instance Refresh Completion
       # - name: Wait for Instance Refresh

@@ -1,7 +1,7 @@
 name: GITFLOW-2
 
 on:
-  push:
+  pull_request:
     branches:
       - main 
 
@@ -54,7 +54,7 @@ jobs:
           echo "PACKER_OUTPUT=$PACKER_OUTPUT" >> $GITHUB_ENV
           AMI_ID=$(echo "$PACKER_OUTPUT" | grep -oP 'Found Image ID: \K(ami-[a-zA-Z0-9]+)' || echo "$PACKER_OUTPUT" | grep -oP 'AMI: \K(ami-[a-zA-Z0-9]+)')
           echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
-          echo "::set-output name=ami_id::$AMI_ID"
+          echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
         env:
           PKR_VAR_database_pass: ${{secrets.DB_PASSWORD}} 
           PKR_VAR_database_user: ${{secrets.DB_USER}}
@@ -63,12 +63,6 @@ jobs:
           PKR_VAR_source_ami: "${{secrets.SOURCE_AMI}}"
           PKR_VAR_subnet_id: "${{secrets.SUBNET_ID}}"
 
-
-
-      - name: Extract AMI ID from Packer
-        run: |
-          AMI_ID=$(cat ami_id.txt)
-          echo "NEW_AMI=$AMI_ID" >> $GITHUB_ENV
 
 
       # Configure AWS credentials for the demo account

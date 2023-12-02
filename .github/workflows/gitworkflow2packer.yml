@@ -60,8 +60,7 @@ jobs:
 
       - name: Extract AMI ID
         run: |
-          NEW_AMI=$(echo "${{ steps.packer_build.outputs.packer_output }}" | grep -oP 'ami-\w+')
-          echo "NEW_AMI=$NEW_AMI" >> $GITHUB_ENV
+          NEW_AMI=$(packer build webapp.pkr.hcl 2>&1 | grep -oP 'ami-\w+')
 
       # Configure AWS credentials for the demo account
       - name: Configuring AWS credentials for demo account

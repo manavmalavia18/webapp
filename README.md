@@ -21,7 +21,7 @@ This project is a RESTful API for managing assignment tasks, enabling users to c
 Ensure these tools and services are available before starting:
 - Node.js (version 18)
 - MariaDB
-- A Debian 12-based DigitalOcean Droplet
+- A Debian 12-based DigitalOcean Droplet!
 
 ## Initial Setup
 

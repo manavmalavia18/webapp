@@ -78,11 +78,11 @@ jobs:
           aws ec2 create-launch-template-version --launch-template-name webapp-launchtemplate --source-version $latest_version --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID}}\"}"
 
 
-      # Update Autoscaling Group with the new Launch Template version
-      - name: Update Autoscaling Group
-        run: |
-          latest_version=$(aws ec2 describe-launch-template-versions --launch-template-name webapp-launchtemplate --query 'LaunchTemplateVersions[-1].VersionNumber' --output text)
-          aws autoscaling update-auto-scaling-group --auto-scaling-group-name webapp-autoscaling --launch-template "LaunchTemplateName=webapp-launchtemplate,Version=$latest_version"
+      # # Update Autoscaling Group with the new Launch Template version
+      # - name: Update Autoscaling Group
+      #   run: |
+      #     latest_version=$(aws ec2 describe-launch-template-versions --launch-template-name webapp-launchtemplate --query 'LaunchTemplateVersions[-1].VersionNumber' --output text)
+      #     aws autoscaling update-auto-scaling-group --auto-scaling-group-name webapp-autoscaling --launch-template "LaunchTemplateName=webapp-launchtemplate,Version=$latest_version"
 
 
 

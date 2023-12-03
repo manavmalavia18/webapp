@@ -63,35 +63,22 @@ jobs:
           PKR_VAR_source_ami: "${{secrets.SOURCE_AMI}}"
           PKR_VAR_subnet_id: "${{secrets.SUBNET_ID}}"
 
-        # Configure AWS credentials for the demo account
+        
       - name: Configuring AWS credentials for demo account
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.ACCESS_KEY_DEMO_ADMIN}}
           aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY_DEMO_ADMIN}}
-          aws-region: us-west-2 # replace with your demo account region
+          aws-region: us-west-2
 
-      # Create New Launch Template Version in the Demo account
+      
       - name: Create New Launch Template Version
         run: |
           latest_version=$(aws ec2 describe-launch-template-versions --launch-template-name webapp-launchtemplate --query 'LaunchTemplateVersions[-1].VersionNumber' --output text)
           aws ec2 create-launch-template-version --launch-template-name webapp-launchtemplate --source-version $latest_version --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID}}\"}"
 
-
-      # # Update Autoscaling Group with the new Launch Template version
-      # - name: Update Autoscaling Group
-      #   run: |
-      #     latest_version=$(aws ec2 describe-launch-template-versions --launch-template-name webapp-launchtemplate --query 'LaunchTemplateVersions[-1].VersionNumber' --output text)
-      #     aws autoscaling update-auto-scaling-group --auto-scaling-group-name webapp-autoscaling --launch-template "LaunchTemplateName=webapp-launchtemplate,Version=$latest_version"
-
-
-
-      # Instance Refresh for the Autoscaling Group
+      
       - name: Instance Refresh
         run: |
           aws autoscaling start-instance-refresh --auto-scaling-group-name webapp-autoscaling
 
-      # # Wait for Instance Refresh Completion
-      # - name: Wait for Instance Refresh
-      #   run: |
-      #     # Add your script/logic here to wait for instance refresh to complete

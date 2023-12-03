@@ -81,7 +81,9 @@ jobs:
       # Update Autoscaling Group with the new Launch Template version
       - name: Update Autoscaling Group
         run: |
-          aws autoscaling update-auto-scaling-group --auto-scaling-group-name webapp-autoscaling --launch-template "{\"Version\":\"$TEMPLATE_VERSION\"}"
+          latest_version=$(aws ec2 describe-launch-template-versions --launch-template-name webapp-launchtemplate --query 'LaunchTemplateVersions[-1].VersionNumber' --output text)
+          aws autoscaling update-auto-scaling-group --auto-scaling-group-name webapp-autoscaling --launch-template "{\"Version\":\"$latest_version\"}"
+
 
       # Instance Refresh for the Autoscaling Group
       - name: Instance Refresh

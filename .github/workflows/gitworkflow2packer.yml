@@ -80,5 +80,9 @@ jobs:
       
       - name: Instance Refresh
         run: |
-          aws autoscaling start-instance-refresh --auto-scaling-group-name webapp-autoscaling
+          aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name webapp-autoscaling \
+            --strategy Rolling \
+            --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 60}'
+
 

@@ -52,8 +52,15 @@ jobs:
           PKR_VAR_source_ami: "${{secrets.SOURCE_AMI}}"
           PKR_VAR_subnet_id: "${{secrets.SUBNET_ID}}"
 
-      - name: Check Launch Template Existence
-        id: check-template
+      - name: Configuring AWS credentials for demo account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACCESS_KEY_DEMO_ADMIN}}
+          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY_DEMO_ADMIN}}
+          aws-region: us-west-2
+
+      - name: Check Launch Template Existence in Demo
+        id: check-template-demo
         run: |
           TEMPLATE_EXISTS=$(aws ec2 describe-launch-templates --launch-template-names webapp-launchtemplate --query 'LaunchTemplates[0]' --output text)
           if [ "$TEMPLATE_EXISTS" == "None" ]; then
@@ -61,14 +68,6 @@ jobs:
           else
             echo "TEMPLATE_EXISTS=true" >> $GITHUB_ENV
           fi
-
-      - name: Configuring AWS credentials for demo account
-        if: env.TEMPLATE_EXISTS == 'true'
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.ACCESS_KEY_DEMO_USER_ASS10}}
-          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY_DEMO_USER_ASS10}}
-          aws-region: us-west-2
 
       - name: Create New Launch Template Version
         if: env.TEMPLATE_EXISTS == 'true'

@@ -31,5 +31,6 @@ Ensure these tools and services are available before starting:
    ```bash
    git clone https://github.com/csye6225-002769231/webapp.git
 
-Import command for certificate:
+Import command for certificate:-
+1) cd to Download and then run this command -
 sudo aws acm import-certificate --certificate fileb://demo_manavmalavia_me/demo_manavmalavia_me.crt --private-key fileb://demo_manavmalavia_me/private.key --profile demo --region us-west-2

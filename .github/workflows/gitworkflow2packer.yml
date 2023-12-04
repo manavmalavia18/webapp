@@ -53,25 +53,25 @@ jobs:
           PKR_VAR_subnet_id: "${{secrets.SUBNET_ID}}"
 
         
-      # - name: Configuring AWS credentials for demo account
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-access-key-id: ${{ secrets.ACCESS_KEY_DEMO_ADMIN}}
-      #     aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY_DEMO_ADMIN}}
-      #     aws-region: us-west-2
+      - name: Configuring AWS credentials for demo account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACCESS_KEY_DEMO_ADMIN}}
+          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY_DEMO_ADMIN}}
+          aws-region: us-west-2
 
       
-      # - name: Create New Launch Template Version
-      #   run: |
-      #     latest_version=$(aws ec2 describe-launch-template-versions --launch-template-name webapp-launchtemplate --query 'LaunchTemplateVersions[-1].VersionNumber' --output text)
-      #     aws ec2 create-launch-template-version --launch-template-name webapp-launchtemplate --source-version $latest_version --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID}}\"}"
+      - name: Create New Launch Template Version
+        run: |
+          latest_version=$(aws ec2 describe-launch-template-versions --launch-template-name webapp-launchtemplate --query 'LaunchTemplateVersions[-1].VersionNumber' --output text)
+          aws ec2 create-launch-template-version --launch-template-name webapp-launchtemplate --source-version $latest_version --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID}}\"}"
 
       
-      # - name: Instance Refresh
-      #   run: |
-      #     aws autoscaling start-instance-refresh \
-      #       --auto-scaling-group-name webapp-autoscaling \
-      #       --strategy Rolling \
-      #       --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 60}'
+      - name: Instance Refresh
+        run: |
+          aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name webapp-autoscaling \
+            --strategy Rolling \
+            --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 60}'
 
 

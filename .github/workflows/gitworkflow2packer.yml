@@ -62,12 +62,12 @@ jobs:
       - name: Check Launch Template Existence in Demo
         id: check-template-demo
         run: |
-          TEMPLATE_EXISTS=$(aws ec2 describe-launch-templates --launch-template-names webapp-launchtemplate --query 'LaunchTemplates[0]' --output text)
-          if [ "$TEMPLATE_EXISTS" == "None" ]; then
-            echo "TEMPLATE_EXISTS=false" >> $GITHUB_ENV
-          else
-            echo "TEMPLATE_EXISTS=true" >> $GITHUB_ENV
+          TEMPLATE_EXISTS="false"
+          if aws ec2 describe-launch-templates --launch-template-names webapp-launchtemplate --query 'LaunchTemplates[0]' --output text; then
+            TEMPLATE_EXISTS="true"
           fi
+          echo "TEMPLATE_EXISTS=$TEMPLATE_EXISTS" >> $GITHUB_ENV
+
 
       - name: Create New Launch Template Version
         if: env.TEMPLATE_EXISTS == 'true'

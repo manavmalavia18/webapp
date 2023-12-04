@@ -68,16 +68,16 @@ const app = express();
 app.use(express.json());
 
 // Routes and Middleware
-app.post('/v2/assignments', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.createAssignment);
-app.get('/v2/assignments', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.getAllAssignments);
-app.get('/v2/assignments/:id', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.getAssignmentById);
-app.put('/v2/assignments/:id', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.updateAssignment);
-app.delete('/v2/assignments/:id', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.deleteAssignment);
-app.post('/v2/assignments/:id/submission', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.submitAssignment);
-app.all('/v2/assignments/:id/submission', (req, res) => {
+app.post('/v1/assignments', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.createAssignment);
+app.get('/v1/assignments', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.getAllAssignments);
+app.get('/v1/assignments/:id', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.getAssignmentById);
+app.put('/v1/assignments/:id', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.updateAssignment);
+app.delete('/v1/assignments/:id', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.deleteAssignment);
+app.post('/v1/assignments/:id/submission', basicAuthMiddleware.basicAuthMiddleware, assignment_controllers.submitAssignment);
+app.all('/v1/assignments/:id/submission', (req, res) => {
   res.status(405).send('Method Not Allowed');
 });
-app.patch('/v2/assignments', (req, res) => {
+app.patch('/v1/assignments', (req, res) => {
     res.status(405).send();
     logger.error({
       errorcode: "405",

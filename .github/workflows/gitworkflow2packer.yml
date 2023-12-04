@@ -82,3 +82,14 @@ jobs:
             --auto-scaling-group-name webapp-autoscaling \
             --strategy Rolling \
             --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 60}'
+
+          # Loop to wait for instance refresh to complete
+          while : ; do
+            STATUS=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name webapp-autoscaling --query 'InstanceRefreshes[0].Status' --output text)
+            if [[ "$STATUS" == "Successful" || "$STATUS" == "Failed" || "$STATUS" == "Cancelled" ]]; then
+              echo "Instance refresh completed with status: $STATUS"
+              break
+            fi
+            echo "Waiting for instance refresh to complete..."
+            sleep 60 # Wait for 60 seconds before checking again
+          done

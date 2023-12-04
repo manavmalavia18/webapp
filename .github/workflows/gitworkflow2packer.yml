@@ -55,8 +55,8 @@ jobs:
       - name: Configuring AWS credentials for demo account
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.ACCESS_KEY_DEMO_ADMIN}}
-          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY_DEMO_ADMIN}}
+          aws-access-key-id: ${{ secrets.ACCESS_KEY_DEMO_USER_ASS10}}
+          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY_DEMO_USER_ASS10}}
           aws-region: us-west-2
 
       - name: Check Launch Template Existence in Demo

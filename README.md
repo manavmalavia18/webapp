@@ -31,6 +31,30 @@ Ensure these tools and services are available before starting:
    ```bash
    git clone https://github.com/csye6225-002769231/webapp.git
 
-Import command for certificate:-
-1) cd to Download and then run this command -
+
+## SSL Certificate Import for AWS ACM
+
+## Prerequisites
+
+Before executing the command, ensure you have the following:
+
+- AWS CLI installed and configured on your machine.
+- Access to the necessary certificate files, which include:
+  - Your SSL/TLS certificate (`.crt` file).
+  - Your private key file (`.key`).
+  - Your certificate chain file (`.ca-bundle`).
+- Adequate AWS IAM permissions to import certificates into ACM.
+
+## Usage
+
+### Importing the Certificate
+
+To import your SSL/TLS certificate into AWS ACM, use the following command structure:
+
+```bash
+sudo aws acm import-certificate --certificate fileb://(certificate_name).crt --private-key fileb://(private_key_filename).key --certificate-chain fileb://(ca_bundle_certificate_name).ca-bundle --region (region_imported_to) --profile (profile_imported_to)
+```
+
+Example:
+```bash
 sudo aws acm import-certificate --certificate fileb://demo_manavmalavia_me/demo_manavmalavia_me.crt --private-key fileb://demo_manavmalavia_me/private.key --profile demo --region us-west-2

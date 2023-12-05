@@ -326,6 +326,11 @@ const submitAssignment = async (req, res) => {
   const userEmail = req.User.email;
 
   try {
+    const contentLength = parseInt(req.get("Content-Length") || "0", 10);
+    if (contentLength === 0) {
+      logError("ClientError", "Content-Length is 0");
+      return res.status(400).send();
+    }
     const assignmentRecord = await Assignment.findByPk(id);
     const userRecord = await User.findByPk(userId);
 

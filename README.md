@@ -56,5 +56,7 @@ sudo aws acm import-certificate --certificate fileb://(certificate_name).crt --p
 ```
 
 Example:
+(Navigate to the directory first where the certificate and key are present and then enter this command)
+
 ```bash
-sudo aws acm import-certificate --certificate fileb://demo_manavmalavia_me/demo_manavmalavia_me.crt --private-key fileb://demo_manavmalavia_me/private.key --profile demo --region us-west-2
+sudo aws acm import-certificate --certificate fileb://demo_manavmalavia_me/demo_manavmalavia_me.crt --private-key fileb://demo_manavmalavia_me/private.key --certificate-chain fileb://demo_manavmalavia_me/demo_manavmalavia_me.ca-bundle --profile demo --region us-west-2 

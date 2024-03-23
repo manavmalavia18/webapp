@@ -26,12 +26,12 @@ jobs:
       - name: Building webapp application artifact 
         if: success()
         run: zip -r webapp.zip .
-
-      - name: Configuring AWS credentials
+      
+      - name: Configuring AWS credentials for iamadmin-webapp account
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.ACCESS_KEY}}
+          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY}}
           aws-region: us-west-2
 
       - name: Initialize packer configuration
@@ -52,44 +52,37 @@ jobs:
           PKR_VAR_source_ami: "${{secrets.SOURCE_AMI}}"
           PKR_VAR_subnet_id: "${{secrets.SUBNET_ID}}"
 
-      - name: Configuring AWS credentials for demo account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.ACCESS_KEY_DEMO_USER_ASS10}}
-          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY_DEMO_USER_ASS10}}
-          aws-region: us-west-2
-
-      - name: Check Launch Template Existence in Demo
-        id: check-template-demo
-        run: |
-          TEMPLATE_EXISTS="false"
-          if aws ec2 describe-launch-templates --launch-template-names webapp-launchtemplate --query 'LaunchTemplates[0]' --output text; then
-            TEMPLATE_EXISTS="true"
-          fi
-          echo "TEMPLATE_EXISTS=$TEMPLATE_EXISTS" >> $GITHUB_ENV
+      # - name: Check Launch Template Existence
+      #   id: check-template-demo
+      #   run: |
+      #     TEMPLATE_EXISTS="false"
+      #     if aws ec2 describe-launch-templates --launch-template-names webapp-launchtemplate --query 'LaunchTemplates[0]' --output text; then
+      #       TEMPLATE_EXISTS="true"
+      #     fi
+      #     echo "TEMPLATE_EXISTS=$TEMPLATE_EXISTS" >> $GITHUB_ENV
 
 
-      - name: Create New Launch Template Version
-        if: env.TEMPLATE_EXISTS == 'true'
-        run: |
-          latest_version=$(aws ec2 describe-launch-template-versions --launch-template-name webapp-launchtemplate --query 'LaunchTemplateVersions[-1].VersionNumber' --output text)
-          aws ec2 create-launch-template-version --launch-template-name webapp-launchtemplate --source-version $latest_version --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID}}\"}"
+      # - name: Create New Launch Template Version
+      #   if: env.TEMPLATE_EXISTS == 'true'
+      #   run: |
+      #     latest_version=$(aws ec2 describe-launch-template-versions --launch-template-name webapp-launchtemplate --query 'LaunchTemplateVersions[-1].VersionNumber' --output text)
+      #     aws ec2 create-launch-template-version --launch-template-name webapp-launchtemplate --source-version $latest_version --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID}}\"}"
 
-      - name: Instance Refresh
-        if: env.TEMPLATE_EXISTS == 'true'
-        run: |
-          aws autoscaling start-instance-refresh \
-            --auto-scaling-group-name webapp-autoscaling \
-            --strategy Rolling \
-            --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 60}'
+      # - name: Instance Refresh
+      #   if: env.TEMPLATE_EXISTS == 'true'
+      #   run: |
+      #     aws autoscaling start-instance-refresh \
+      #       --auto-scaling-group-name webapp-autoscaling \
+      #       --strategy Rolling \
+      #       --preferences '{"MinHealthyPercentage": 50, "InstanceWarmup": 60}'
 
-          # Loop to wait for instance refresh to complete
-          while : ; do
-            STATUS=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name webapp-autoscaling --query 'InstanceRefreshes[0].Status' --output text)
-            if [[ "$STATUS" == "Successful" || "$STATUS" == "Failed" || "$STATUS" == "Cancelled" ]]; then
-              echo "Instance refresh completed with status: $STATUS"
-              break
-            fi
-            echo "Waiting for instance refresh to complete..."
-            sleep 60 # Wait for 60 seconds before checking again
-          done
+      #     # Loop to wait for instance refresh to complete
+      #     while : ; do
+      #       STATUS=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name webapp-autoscaling --query 'InstanceRefreshes[0].Status' --output text)
+      #       if [[ "$STATUS" == "Successful" || "$STATUS" == "Failed" || "$STATUS" == "Cancelled" ]]; then
+      #         echo "Instance refresh completed with status: $STATUS"
+      #         break
+      #       fi
+      #       echo "Waiting for instance refresh to complete..."
+      #       sleep 60 # Wait for 60 seconds before checking again
+      #     done
